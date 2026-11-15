@@ -1,0 +1,8 @@
+# The face's flash (16 MB): one big program partition for the map data and fonts compiled into it
+# (about 9 MB, more than the 3 MB of Arduino's usual 16 MB scheme). No over-the-air updates, no
+# file system; a small spot for crash reports. Build with Tools > Partition Scheme > Custom (PartitionScheme=custom).
+# Name,   Type, SubType, Offset,   Size
+nvs,      data, nvs,     0x9000,   0x5000
+phy_init, data, phy,     0xe000,   0x1000
+factory,  app,  factory, 0x10000,  0xFE0000
+coredump, data, coredump,0xFF0000, 0x10000
