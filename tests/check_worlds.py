@@ -23,17 +23,17 @@ sys.path.insert(0, str(ROOT))
 
 import radio                                                                    # noqa: E402
 import radio_map                                                                     # noqa: E402
-from terradio import worlds                                                         # noqa: E402
-from terradio.dial import Dial                                                      # noqa: E402
-from terradio.face_link import (FaceLink, FaceState, decode, face_state, loopback,  # noqa: E402
+from worlddeskradio import worlds                                                         # noqa: E402
+from worlddeskradio.dial import Dial                                                      # noqa: E402
+from worlddeskradio.face_link import (FaceLink, FaceState, decode, face_state, loopback,  # noqa: E402
                                  state_from_message, state_message)
-from terradio.map_view import FaceScreen, MapView, face_hud, radius_for_view       # noqa: E402
-from terradio.panels import WorldMenu                                               # noqa: E402
-from terradio.player import Player, find_backend                                    # noqa: E402
-from terradio.settings import Settings                                              # noqa: E402
-from terradio.virtual_face import VirtualFace                                       # noqa: E402
+from worlddeskradio.map_view import FaceScreen, MapView, face_hud, radius_for_view       # noqa: E402
+from worlddeskradio.panels import WorldMenu                                               # noqa: E402
+from worlddeskradio.player import Player, find_backend                                    # noqa: E402
+from worlddeskradio.settings import Settings                                              # noqa: E402
+from worlddeskradio.virtual_face import VirtualFace                                       # noqa: E402
 
-TMP = Path(tempfile.mkdtemp(prefix="terradio-worlds-"))
+TMP = Path(tempfile.mkdtemp(prefix="worlddeskradio-worlds-"))
 atexit.register(shutil.rmtree, TMP, ignore_errors=True)
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else TMP
 OUT.mkdir(parents=True, exist_ok=True)
@@ -135,7 +135,7 @@ cue = tr.cue(t0 + tr.seconds[0] - 1.0)
 check("under 2 s left of a track: start the next one instead", cue[0] == (tr.folder / "0001.opus", 0.0))
 check("a cue is never more than CUE_FILES files (a short loop over 12 hours would be thousands)",
       len(tr.cue()) == worlds.CUE_FILES and len(tr.cue(max_files=5)) == 5)
-from terradio.health import StationHealth                                           # noqa: E402
+from worlddeskradio.health import StationHealth                                           # noqa: E402
 health = StationHealth()
 for _ in range(3):
     health.record("http-ok", ["world:testland:north", "http-dead"])
@@ -177,7 +177,7 @@ def settle(dial, seconds=2):
 
 clicks = []
 radio_map.station_db.report_click = clicks.append      # (the Dial imported its own copy: patched below too)
-import terradio.dial as dial_mod                                                    # noqa: E402
+import worlddeskradio.dial as dial_mod                                                    # noqa: E402
 dial_mod.report_click = clicks.append
 player = FakePlayer()
 dial = Dial(w.stations, player, lat=2.0, lon=0.5, settle_s=0.05)
@@ -206,7 +206,7 @@ check("rolled to where another station is clearly nearer: it tunes that one",
       dial.state.status == "turning")
 settle(dial)
 check("...and locks on to it", dial.state.status == "playing" and dial.state.playing is south)
-from terradio.stations import haversine_km                                          # noqa: E402
+from worlddeskradio.stations import haversine_km                                          # noqa: E402
 mid = (-0.25, -0.15)                 # a bit nearer North, but not under HOLD times as far
 d_n, d_s = haversine_km(*mid, 2.0, 0.5), haversine_km(*mid, -3.0, -1.0)
 plays = len(player.plays)
@@ -243,7 +243,7 @@ zc.zoom_in()
 check("zooming in says it in words, not the pretend km", zc.toast() == "Closer" and zc.zoom_km == w.zooms[1])
 zc.zoom_in(), zc.zoom_in()
 check("and goes round: close up, then the whole map again", zc.zoom_km == w.zooms[0] and zc.toast() == "Whole map")
-from terradio.map_view import drift_offset, width_for_zoom                          # noqa: E402
+from worlddeskradio.map_view import drift_offset, width_for_zoom                          # noqa: E402
 width = width_for_zoom(w.home[2])
 path = [drift_offset(t, width) for t in range(0, 600, 5)]
 check("idle, the map drifts in a slow loop, never far (under a tenth of the view)",
@@ -346,7 +346,7 @@ img.save(OUT / "testland.png")
 row = [img.getpixel((x, 240)) for x in range(480)]
 coast = view.theme.coast
 check("the island's coast is drawn, at the 2,000 km zoom", sum(1 for p in row if p == coast) >= 2)
-from terradio.map_view import SIGNAL_Y, Hud                                         # noqa: E402
+from worlddeskradio.map_view import SIGNAL_Y, Hud                                         # noqa: E402
 view.set_world(w.coast, w.borders, icons=w.icons)
 cy = round(SIGNAL_Y * view.k)
 r = radius_for_view(math.degrees(2000 / 6371))

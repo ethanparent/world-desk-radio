@@ -1,4 +1,4 @@
-# Terradio on a Raspberry Pi
+# World Desk Radio on a Raspberry Pi
 
 On the radio, a Raspberry Pi Zero 2 W runs the same Python program with no window: the round face
 draws the map, and the trackball and knobs are wired to the Pi's pins. The parts list and the pin
@@ -7,14 +7,14 @@ map are in [PLAN.md](../PLAN.md); the case is in [case/](../case/README.md).
 ## Setting up the SD card
 
 1. Flash **Raspberry Pi OS Lite (64-bit)** with Raspberry Pi Imager. In Imager's settings, set the
-   hostname to `terradio`, your Wi-Fi, an SSH key, and a user name (the tools here assume `pi`;
-   pass `--host you@terradio.local` to them if you pick another).
+   hostname to `worlddeskradio`, your Wi-Fi, an SSH key, and a user name (the tools here assume `pi`;
+   pass `--host you@worlddeskradio.local` to them if you pick another).
 2. Log in and fetch the radio:
 
    ```bash
-   ssh pi@terradio.local
+   ssh pi@worlddeskradio.local
    sudo apt install -y git
-   git clone https://github.com/ethanparent/terradio.git ~/terradio
+   git clone https://github.com/ethanparent/world-desk-radio.git ~/world-desk-radio
    ```
 
 3. Install it (next section). The first start downloads the station list; it's quicker to copy
@@ -24,9 +24,9 @@ map are in [PLAN.md](../PLAN.md); the case is in [case/](../case/README.md).
 
 `sh pi/install.sh` (on the Pi, from the checkout) installs what the radio needs,
 sets it up as a service that starts at boot and comes back if it stops
-(`pi/terradio.service`, with `--lan` so the phone page is
-http://terradio.local:8737), and a monthly station-list refresh
-(`pi/terradio-stations.timer`, running `radio.py --refresh-stations`:
+(`pi/worlddeskradio.service`, with `--lan` so the phone page is
+http://worlddeskradio.local:8737), and a monthly station-list refresh
+(`pi/worlddeskradio-stations.timer`, running `radio.py --refresh-stations`:
 the new list is swapped in only once it's complete, and the radio starts again
 on it when nobody's listening). Bluetooth goes through BlueZ, Wi-Fi through
 NetworkManager; with no Wi-Fi for 45 seconds the radio opens its own network and
@@ -35,15 +35,15 @@ overlay, keeping the checkout, Bluetooth pairings and Wi-Fi networks on a small
 writable spot.
 
 ```
-systemctl --user status terradio      # is it running?
-journalctl --user-unit terradio -f      # its lines as they come
-systemctl --user stop terradio        # stop it, to run it by hand over SSH
+systemctl --user status worlddeskradio      # is it running?
+journalctl --user-unit worlddeskradio -f      # its lines as they come
+systemctl --user stop worlddeskradio        # stop it, to run it by hand over SSH
 ```
 
 ## The trackball and knobs
 
-`terradio/controls.py` doesn't care where its input comes from. On the Pi,
-`terradio/knobs.py` reads the trackball and the two knobs through gpiozero and
+`worlddeskradio/controls.py` doesn't care where its input comes from. On the Pi,
+`worlddeskradio/knobs.py` reads the trackball and the two knobs through gpiozero and
 turns them into the same calls the mouse and keys make; `--headless` starts it by
 itself (`--no-knobs` leaves the pins alone). The pins only note what happened;
 the main loop makes the calls, so nothing runs on two threads at once.
@@ -81,7 +81,7 @@ Export Compiled Binary), copies the firmware to the Pi, and runs
 `pi/flash_face.sh` there: that stops the radio, flashes the face with esptool
 (it resets the face into its bootloader by itself, no buttons), and starts the
 radio again, even if the flashing fails. `--no-build` flashes what's already in
-`face/build`, and `--host <user>@<address>` reaches the Pi if `terradio.local`
+`face/build`, and `--host <user>@<address>` reaches the Pi if `worlddeskradio.local`
 doesn't. esptool comes with `requirements.txt` on the Pi; the script adds it if
 the Pi's `.venv` doesn't have it yet. The read-only overlay can stay on: the
 `.venv` is on the writable spot.

@@ -27,7 +27,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp(prefix="terradio-face-"))
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp(prefix="worlddeskradio-face-"))
 OUT.mkdir(parents=True, exist_ok=True)
 
 import pygame                                                                        # noqa: E402
@@ -35,18 +35,18 @@ from PIL import Image                                                           
 
 import radio                                                                    # noqa: E402
 import radio_map                                                                     # noqa: E402
-from terradio import controls as controls_mod                                       # noqa: E402
-from terradio import face_link                                                      # noqa: E402
-from terradio import map_view as map_view_mod                                       # noqa: E402
-from terradio import player as player_mod                                           # noqa: E402
-from terradio import screen as screen_mod                                           # noqa: E402
-from terradio import static                                                         # noqa: E402
-from terradio import stations as db                                                 # noqa: E402
-from terradio import updater as updater_mod                                         # noqa: E402
-from terradio import virtual_face as virtual_face_mod                               # noqa: E402
-from terradio.map_view import MapView, face_view, get_theme, signal_phase           # noqa: E402
-from terradio.screen import PygameWindow                                            # noqa: E402
-from terradio.weather import SKIES, Report, Weather                                 # noqa: E402
+from worlddeskradio import controls as controls_mod                                       # noqa: E402
+from worlddeskradio import face_link                                                      # noqa: E402
+from worlddeskradio import map_view as map_view_mod                                       # noqa: E402
+from worlddeskradio import player as player_mod                                           # noqa: E402
+from worlddeskradio import screen as screen_mod                                           # noqa: E402
+from worlddeskradio import static                                                         # noqa: E402
+from worlddeskradio import stations as db                                                 # noqa: E402
+from worlddeskradio import updater as updater_mod                                         # noqa: E402
+from worlddeskradio import virtual_face as virtual_face_mod                               # noqa: E402
+from worlddeskradio.map_view import MapView, face_view, get_theme, signal_phase           # noqa: E402
+from worlddeskradio.screen import PygameWindow                                            # noqa: E402
+from worlddeskradio.weather import SKIES, Report, Weather                                 # noqa: E402
 
 if not db.CLEAN_PATH.exists():
     print("The station list isn't downloaded yet: run  python radio.py --update  first.")
@@ -319,7 +319,7 @@ at(39.0, ("cp", "Wi-Fi setup: QR code"))
 at(39.5, ("call", lambda: phone("/api/connect", {"ssid": "Home Wi-Fi", "password": "wrong-one"})))
 at(40.2, ("cp", "Wi-Fi: connecting"))
 at(42.6, ("cp", "Wi-Fi: wrong password"), ("call", lambda: phone("/api/status")))
-at(47.0, ("call", lambda: phone("/api/connect", {"ssid": "Home Wi-Fi", "password": "terradio"})))
+at(47.0, ("call", lambda: phone("/api/connect", {"ssid": "Home Wi-Fi", "password": "worlddeskradio"})))
 at(50.0, ("cp", "Wi-Fi: connected"), ("call", lambda: phone("/api/status")))
 at(53.5, ("cp", "back to the map"))
 # Like the song (both knob buttons tapped: H), then surprise me (R) and its flight.

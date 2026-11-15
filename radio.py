@@ -1,4 +1,4 @@
-"""Terradio, laptop prototype: arrow keys stand in for the two knobs.
+"""World Desk Radio, laptop prototype: arrow keys stand in for the two knobs.
 
     python radio.py               # run (downloads stations on first run)
     python radio.py --update      # finish / refresh the station download first
@@ -20,10 +20,10 @@ import sys
 import time
 from pathlib import Path
 
-from terradio import stations as station_db
-from terradio.dial import Dial
-from terradio.player import Player, find_backend
-from terradio import static
+from worlddeskradio import stations as station_db
+from worlddeskradio.dial import Dial
+from worlddeskradio.player import Player, find_backend
+from worlddeskradio import static
 
 ROOT = Path(__file__).resolve().parent
 STATIC_WAV = ROOT / "static.wav"
@@ -95,7 +95,7 @@ def place(s):
 
 def draw(state, step, backend):
     out = ["\x1b[H\x1b[J",
-           "TERRADIO  ·  laptop prototype\n",
+           "WORLD DESK RADIO  ·  laptop prototype\n",
            "─" * 56 + "\n",
            f"  Dial      {fmt_lat(state.lat)}  {fmt_lon(state.lon)}    step {step:g}°\n",
            f"  Stations  {state.station_count:,}\n\n"]
@@ -130,7 +130,7 @@ def draw(state, step, backend):
 # --- main ----------------------------------------------------------------
 
 def main():
-    ap = argparse.ArgumentParser(description="Terradio laptop prototype")
+    ap = argparse.ArgumentParser(description="World Desk Radio laptop prototype")
     ap.add_argument("--update", action="store_true",
                     help="finish a partial station download, or re-download a complete one")
     ap.add_argument("--start",
@@ -269,11 +269,11 @@ def restart_if_updated(code):
         return code
     args = sys.argv
     if code == radio_map.RESTART:
-        os.environ["TERRADIO_UPDATED"] = "1"      # so it says "Software updated" when it's back
+        os.environ["WORLDDESKRADIO_UPDATED"] = "1"      # so it says "Software updated" when it's back
     else:
         # Another world (the World menu): it says the world's name when it's there, and starts
         # where you last were in it, so a --start or --theme given for the old one is dropped.
-        os.environ["TERRADIO_NEW_WORLD"] = "1"
+        os.environ["WORLDDESKRADIO_NEW_WORLD"] = "1"
         args = _without(args, ("--start", "--theme"))
     argv = [sys.executable, *args]
     if sys.platform == "win32":

@@ -2,7 +2,7 @@
 # runs soon after it's next on (Persistent). A refresh cut short carries on from where it stopped.
 
 [Unit]
-Description=Terradio: refresh the station list monthly
+Description=World Desk Radio: refresh the station list monthly
 
 [Timer]
 OnCalendar=*-*-01 03:30

@@ -48,7 +48,7 @@ class PygameWindow(Display):
     DRAG_START_PX = 4      # the mouse must move this far before a press becomes a drag
     LONG_PRESS_S = 0.6
 
-    def __init__(self, size=SIZE, scale=2, title="Terradio"):
+    def __init__(self, size=SIZE, scale=2, title="World Desk Radio"):
         if sys.platform == "win32":
             # Without this, Windows display scaling stretches the window and blurs the pixels.
             try:

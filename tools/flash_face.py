@@ -3,7 +3,7 @@ Pi flash the face over their USB cable (pi/flash_face.sh). Nothing to unplug or 
 
     python tools/flash_face.py                     # build, copy, flash
     python tools/flash_face.py --no-build          # flash what's already in face/build
-    python tools/flash_face.py --host you@192.168.1.50       # another user name, or if terradio.local doesn't resolve
+    python tools/flash_face.py --host you@192.168.1.50       # another user name, or if worlddeskradio.local doesn't resolve
     python tools/flash_face.py --build-only        # just build (same as the IDE's Export Compiled Binary)
 
 It builds with the arduino-cli that comes inside the Arduino IDE, with the IDE's own settings, and
@@ -29,8 +29,8 @@ SKETCH = ROOT / "face"
 BUILD = SKETCH / "build" / "esp32.esp32.esp32s3"
 FQBN = ("esp32:esp32:esp32s3:FlashSize=16M,PSRAM=opi,PartitionScheme=custom,CDCOnBoot=cdc,"
         "CPUFreq=240,FlashMode=qio")
-HOST = "pi@terradio.local"           # the user and hostname you set in Raspberry Pi Imager
-REMOTE_DIR = "/tmp/terradio-face"
+HOST = "pi@worlddeskradio.local"           # the user and hostname you set in Raspberry Pi Imager
+REMOTE_DIR = "/tmp/worlddeskradio-face"
 ARDUINO_CLI = [Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Arduino IDE" / "resources" / "app" / "lib"
                / "backend" / "resources" / "arduino-cli.exe"]
 IDE_CONFIG = Path.home() / ".arduinoIDE" / "arduino-cli.yaml"

@@ -1,4 +1,4 @@
-// Terradio: the whole build, with every part and cable in place.
+// World Desk Radio: the whole build, with every part and cable in place.
 //
 // Loads radio_case.scad and adds stand-ins for the electronics, at their real
 // sizes and in their real places, to check that everything fits and to show how

@@ -1,4 +1,4 @@
-# Running Terradio on a computer
+# Running World Desk Radio on a computer
 
 Everything the radio does works on a laptop or desktop (Windows, macOS or Linux), with the mouse
 and keyboard standing in for the trackball and knobs. Bluetooth and Wi-Fi setup use pretend
@@ -139,14 +139,14 @@ laptop. B opens the Bluetooth menu: turn the mouse wheel to choose, F to
 connect, M to close. N starts Wi-Fi setup as the radio would when it finds no
 network: the face shows a QR code, and the console prints the address of the
 setup page (http://127.0.0.1:8737). Open it in a browser, pick a network and
-type `terradio`, the pretend networks' password.
+type `worlddeskradio`, the pretend networks' password.
 
 ### Extras
 
 Extras: `--theme radar` starts in another theme, `--size 240` previews the 1.28″
 fallback screen, `--scale 2` makes the window bigger.
-`python -m terradio.map_view --sheet themes.png` saves every theme side by side. `python -m terradio.map_view --png map.png --at 37.57,126.98` saves one
-frame as an image, and `python -m terradio.map_view --bench` measures drawing speed.
+`python -m worlddeskradio.map_view --sheet themes.png` saves every theme side by side. `python -m worlddeskradio.map_view --png map.png --at 37.57,126.98` saves one
+frame as an image, and `python -m worlddeskradio.map_view --bench` measures drawing speed.
 
 ### Driving the round face
 

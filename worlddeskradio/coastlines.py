@@ -11,7 +11,7 @@ vectors, which is what the map renderer wants and loads in milliseconds.
     load("50m", BORDERS)         # borders between countries, on land
     load_cities()                # cities to label, biggest first
 
-Run on its own to fetch them all:  python -m terradio.coastlines
+Run on its own to fetch them all:  python -m worlddeskradio.coastlines
 """
 
 import json

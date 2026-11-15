@@ -14,7 +14,7 @@ set -eu
 DIR=${1:?Usage: sh flash_face.sh <folder> <write_flash arguments>}
 shift
 PORT=${FACE_PORT:-/dev/ttyACM0}
-PY=$HOME/terradio/.venv/bin/python
+PY=$HOME/world-desk-radio/.venv/bin/python
 
 if [ ! -e "$PORT" ]; then
     echo "No face on $PORT: is its USB cable plugged into the Pi?" >&2
@@ -26,20 +26,20 @@ if ! "$PY" -m esptool version >/dev/null 2>&1; then
 fi
 
 WAS_RUNNING=no
-if systemctl --user is-active --quiet terradio; then
+if systemctl --user is-active --quiet worlddeskradio; then
     WAS_RUNNING=yes
 fi
 start_again() {
     if [ "$WAS_RUNNING" = yes ]; then
         echo "Starting the radio again ..."
-        systemctl --user start terradio
+        systemctl --user start worlddeskradio
     fi
 }
 trap start_again EXIT
 
 if [ "$WAS_RUNNING" = yes ]; then
     echo "Stopping the radio (it holds the face's port) ..."
-    systemctl --user stop terradio
+    systemctl --user stop worlddeskradio
 fi
 if pgrep -f radio.py >/dev/null; then
     echo "Another copy of the radio is running (run by hand, or the monthly station refresh;" >&2
@@ -61,13 +61,13 @@ if [ "$WAS_RUNNING" = yes ]; then
     # Wait for the radio to find the face again, and show what it says about it.
     i=0
     while [ $i -lt 30 ]; do
-        if journalctl --user-unit terradio --since "$SINCE" -o cat 2>/dev/null | grep -q "Face: connected"; then
+        if journalctl --user-unit worlddeskradio --since "$SINCE" -o cat 2>/dev/null | grep -q "Face: connected"; then
             break
         fi
         sleep 1
         i=$((i + 1))
     done
     sleep 2
-    journalctl --user-unit terradio --since "$SINCE" -o cat 2>/dev/null | grep "Face" || \
-        echo "The radio hasn't mentioned the face yet: journalctl --user-unit terradio -f"
+    journalctl --user-unit worlddeskradio --since "$SINCE" -o cat 2>/dev/null | grep "Face" || \
+        echo "The radio hasn't mentioned the face yet: journalctl --user-unit worlddeskradio -f"
 fi

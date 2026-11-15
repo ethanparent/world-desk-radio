@@ -1,4 +1,4 @@
-"""Software updates (terradio/updater.py) against throwaway git repos in a temporary folder: a
+"""Software updates (worlddeskradio/updater.py) against throwaway git repos in a temporary folder: a
 bare "GitHub", the radio's checkout, and a developer's checkout that pushes new versions.
 Nothing touches this project's own repo or the real GitHub.
 
@@ -15,9 +15,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from terradio.updater import Updater                                                # noqa: E402
+from worlddeskradio.updater import Updater                                                # noqa: E402
 
-BASE = Path(tempfile.mkdtemp(prefix="terradio-updater-"))
+BASE = Path(tempfile.mkdtemp(prefix="worlddeskradio-updater-"))
 atexit.register(shutil.rmtree, BASE, ignore_errors=True)
 results = []
 

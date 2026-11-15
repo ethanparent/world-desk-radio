@@ -1,9 +1,9 @@
-# Terradio
+# World Desk Radio
 
 **Listen to live radio from anywhere in the world, on a radio that sits on your
 desk.**
 
-Terradio puts nearly 13,000 live stations from over 180 countries on a glowing
+World Desk Radio puts nearly 13,000 live stations from over 180 countries on a glowing
 globe. Roll the trackball to spin the world to Lagos, Reykjavík, Seoul or a
 small town in Chile. Stop, and the nearest station tunes in: whatever is on air
 there right now, from local news and talk shows to music you'd never find at
@@ -11,7 +11,7 @@ home. It's inspired by [Radio Garden](https://radio.garden), built as a real
 radio with a real dial.
 
 <p align="center">
-  <img src="case/renders/front.png" width="300" alt="The Terradio case: a small dark box with a round screen, two knobs and a trackball on top">
+  <img src="case/renders/front.png" width="300" alt="The World Desk Radio case: a small dark box with a round screen, two knobs and a trackball on top">
   &nbsp;&nbsp;
   <img src="docs/images/europe.png" width="300" alt="The round screen over Europe: thousands of glowing station dots, the crosshair over the Black Forest, tuned to Schwarzwaldradio">
 </p>
@@ -58,8 +58,8 @@ You need Python 3.10 or newer and [mpv](https://mpv.io) (or `ffplay` from
 FFmpeg) for the sound.
 
 ```bash
-git clone https://github.com/ethanparent/terradio.git
-cd terradio
+git clone https://github.com/ethanparent/world-desk-radio.git
+cd world-desk-radio
 python -m pip install -r requirements.txt
 python radio.py --map
 ```
@@ -128,22 +128,22 @@ standoff kit.
 ## How it works
 
 - **Stations** come from [Radio Browser](https://www.radio-browser.info), a free,
-  open, community-run database. Terradio keeps the stations that passed Radio
+  open, community-run database. World Desk Radio keeps the stations that passed Radio
   Browser's last check and have coordinates, and drops duplicates. The audio
   comes straight from each station's own server. You can add or correct
   stations in [`my-stations.json`](docs/laptop.md#your-own-stations).
-- **The dial** (`terradio/dial.py`) turns a position into the nearest station,
+- **The dial** (`worlddeskradio/dial.py`) turns a position into the nearest station,
   waits for the globe to settle, and falls back to the next station when a
   stream won't start.
-- **The map** (`terradio/map_view.py`) is drawn with numpy and Pillow. It's the
+- **The map** (`worlddeskradio/map_view.py`) is drawn with numpy and Pillow. It's the
   design reference: on the real radio the face redraws the same picture itself
   from the messages it gets, and a test checks that those messages alone
   rebuild the picture pixel for pixel.
-- **The controls** (`terradio/controls.py`) don't know about mice or pins. On the
-  Pi, `terradio/knobs.py` reads the trackball and knobs through gpiozero and
+- **The controls** (`worlddeskradio/controls.py`) don't know about mice or pins. On the
+  Pi, `worlddeskradio/knobs.py` reads the trackball and knobs through gpiozero and
   makes the same calls the mouse and keys do.
 - **The face** (`face/`) gets compact messages over USB serial
-  (`terradio/face_link.py` is the Pi's end) and draws the globe in strips on
+  (`worlddeskradio/face_link.py` is the Pi's end) and draws the globe in strips on
   both of the ESP32-S3's cores.
 
 ## Project layout
@@ -151,7 +151,7 @@ standoff kit.
 ```
 radio.py            start here: the radio (text dial, --map window, or --headless on the Pi)
 radio_map.py        the radio's main loop
-terradio/           the radio in Python: dial, player, stations, controls, phone page, ...
+worlddeskradio/     the radio in Python: dial, player, stations, controls, phone page, ...
 face/               the round face's Arduino firmware (and face/bench/, a speed test)
 case/               the OpenSCAD case, STL and 3MF files, and renders
 pi/                 Raspberry Pi install script, services and read-only overlay
@@ -175,7 +175,7 @@ one covers.
 ## Credits
 
 - [Radio Garden](https://radio.garden) for the idea of exploring radio on a
-  globe. Terradio isn't affiliated with it and doesn't use its service.
+  globe. World Desk Radio isn't affiliated with it and doesn't use its service.
 - Station data: [Radio Browser](https://www.radio-browser.info), community-run.
   The streams belong to their stations.
 - Coastlines, borders and cities: [Natural Earth](https://www.naturalearthdata.com)

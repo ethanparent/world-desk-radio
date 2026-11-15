@@ -1,5 +1,5 @@
 // link.h: the face's end of the USB cable (PLAN.md, "Messages from the Pi to the face";
-// terradio/face_link.py is the Pi's end and the source of truth for the formats).
+// worlddeskradio/face_link.py is the Pi's end and the source of truth for the formats).
 //
 // One JSON object per line. A task reads the port all the time into a ring buffer in PSRAM, so the
 // Pi's writes never back up while a frame is being drawn (a write that blocks for 0.5 s makes the

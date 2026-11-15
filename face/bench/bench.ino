@@ -1,4 +1,4 @@
-// Terradio face benchmark: can the ESP32-S3 draw the night globe at 20+ fps?
+// World Desk Radio face benchmark: can the ESP32-S3 draw the night globe at 20+ fps?
 //
 // Flash it onto the Waveshare ESP32-S3-LCD-2.8C (board settings in README.md), open the Serial
 // Monitor at 115200 baud and read the numbers. At start-up it runs every test for a few seconds and
@@ -598,7 +598,7 @@ void setup() {
   Serial.setTxBufferSize(4096);       // so printing never stalls a frame
   Serial.begin(115200);
   delay(500);
-  Serial.println("\nTerradio face benchmark");
+  Serial.println("\nWorld Desk Radio face benchmark");
   Serial.printf("Pixel clock %d MHz, bounce buffers %d lines, %d frame buffers, strips %d lines, %s data.\n",
                 pclkMHz, BOUNCE_LINES, FRAME_BUFFERS, STRIP_LINES,
                 REAL_DATA ? "real (tools/face_data.py)" : "made-up (no data_*.h found)");

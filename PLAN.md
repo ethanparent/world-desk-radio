@@ -1,4 +1,4 @@
-# Terradio: project plan
+# World Desk Radio: project plan
 
 A modern, minimal desk radio. Its face is a round screen: roll a small
 light-up trackball and the globe turns with it under a fixed crosshair. When you stop,
@@ -62,7 +62,7 @@ Ruled out, and why:
 
 One JSON object per line (UTF-8, ending in a newline) over the USB serial link.
 The face shows up on the Pi as `/dev/ttyACM0`, and on the laptop as a COM port.
-`terradio/face_link.py` writes them. `python radio.py --virtual-face` draws
+`worlddeskradio/face_link.py` writes them. `python radio.py --virtual-face` draws
 the laptop window from these messages alone, as the face will, and `--compare`
 shows it next to the normal preview.
 
@@ -133,7 +133,7 @@ When a station comes on air, the dial locks onto it, like a radio's automatic
 frequency control: the globe glides gently until the station sits under the
 crosshair, without tuning again.
 
-The phone page (`terradio/setup_page.py`) is a remote as well: previous and
+The phone page (`worlddeskradio/setup_page.py`) is a remote as well: previous and
 next station (the Tune knob's steps), like, save as a favorite, surprise me, a
 volume slider, mute and standby, and the favorites list (tap one to tune it). It
 shows the weather and time at the station, and sets the alarm, sleep timer,
@@ -266,7 +266,7 @@ frame-time numbers say the Pi can keep up.
 **Frame-time results (20 Oct 2026).** The Pi no longer draws the map, so these
 numbers matter only for the fallback (a 1.28″ round screen driven by the Pi). Run
 `python radio.py --map` to see it.
-The numbers come from `python -m terradio.map_view --bench`: the median of 200
+The numbers come from `python -m worlddeskradio.map_view --bench`: the median of 200
 frames while the map keeps moving, over three runs. Laptop: Ryzen 5 PRO 5650U,
 plugged in.
 
@@ -324,7 +324,7 @@ The face board needs no Pi, so it can be built as soon as it arrives.
   than the 3 MB program space of the Arduino IDE's usual 16 MB partition scheme,
   so `face/` needs a `partitions.csv` with a bigger program space (no OTA
   needed).
-- `terradio/face_link.py` (done) sends `hello`/`stations`/`state` messages over
+- `worlddeskradio/face_link.py` (done) sends `hello`/`stations`/`state` messages over
   USB serial. Run `python radio.py --face COM5` on the laptop and the arrow
   keys drive the real face. `--virtual-face` already shows what the face should
   draw from those messages.
@@ -370,7 +370,7 @@ on the laptop, and shows the station that's playing through the laptop speakers.
 ### Stage 3: Pi + speaker + Bluetooth
 
 - Flash Raspberry Pi OS Lite (64-bit) with Raspberry Pi Imager. In Imager, set the
-  hostname `terradio`, Wi-Fi, SSH key and user.
+  hostname `worlddeskradio`, Wi-Fi, SSH key and user.
 - SSH in, `git clone` this repo, and install mpv, PipeWire and Python packages.
 - Use the pre-soldered amp (no soldering). Solder two wires to the speaker's
   tabs, screw them into the amp's terminal, breadboard the amp and enable the
@@ -392,7 +392,7 @@ on the laptop, and shows the station that's playing through the laptop speakers.
   static at a random point, as ffplay's does (`--start`, checking that the loop
   then goes back to the beginning, not to that point).
 - Bluetooth and Wi-Fi for real (done on the laptop with pretend ones:
-  `terradio/connectivity.py`, `panels.py`, `setup_page.py`; press B and N in
+  `worlddeskradio/connectivity.py`, `panels.py`, `setup_page.py`; press B and N in
   the map window). Write `BluezBluetooth` (pairing, trusting, connecting through
   BlueZ) and `NetworkManagerWiFi` (scanning, connecting and the setup hotspot
   through `nmcli`) with the same methods as the pretend ones. For the setup page
@@ -402,15 +402,15 @@ on the laptop, and shows the station that's playing through the laptop speakers.
   you to watch the radio's screen for the result. Audio should switch to the
   headphones automatically when they connect and back to the speaker when they
   disconnect.
-- Software updates (`terradio/updater.py`, done on the laptop: checked every 6
+- Software updates (`worlddeskradio/updater.py`, done on the laptop: checked every 6
   hours, installed from the phone page, or by itself between 2 and 5 am while
   the radio is in standby or idle and silent). The Pi needs read access to the
   private GitHub repo: a read-only deploy key. Run the radio from a virtualenv so
   the updater's `pip install` has somewhere to go. It restarts itself after an
   update (`os.execv`, the same process to systemd).
 - The phone page on the home network (`--lan` on the laptop): serve it on all
-  addresses and announce `terradio.local` with avahi, so the remote is
-  http://terradio.local:8737.
+  addresses and announce `worlddeskradio.local` with avahi, so the remote is
+  http://worlddeskradio.local:8737.
 - **Risk check:** stream for 30 minutes over Bluetooth. On the Zero 2 W, Wi-Fi and
   Bluetooth share one radio chip and can stutter together. If it does, try a
   lower Bluetooth codec or larger mpv buffers. The fallback is speaker-only, or
@@ -429,7 +429,7 @@ dropouts and shows on the face.
   already use. Each flip of a trackball direction pin is one step for `roll()`;
   its press and long press are zoom and theme. The Tune encoder goes to
   `turn_tune()` and the favorites, and the Volume encoder to volume and mute
-  (see Controls). The ball's four LEDs follow `terradio/ball_light.py` (done;
+  (see Controls). The ball's four LEDs follow `worlddeskradio/ball_light.py` (done;
   the laptop window shows it as a dot in its corner): they breathe while tuning,
   glow in the theme's color while a station plays, and pulse once when you save
   a favorite.
@@ -442,7 +442,7 @@ dropouts and shows on the face.
 **Done when** you can roll, tune, zoom, change the volume, save and recall
 favorites, and enter standby, all by hand, with the face following along.
 
-**Done on the bench (2026-11-14),** with `terradio/knobs.py`: every item above
+**Done on the bench (2026-11-14),** with `worlddeskradio/knobs.py`: every item above
 worked by hand with the face following, plus double press (surprise), the
 long presses, both buttons (like, the Bluetooth menu) and waking from standby.
 What the real parts taught: the EC11s bounce a lot, but the quadrature state
@@ -476,8 +476,8 @@ are on the weak pull-ups until their resistors are checked (`"ball_lights":
   update, and reboot.
 
 **Where it stands (2026-11-14):** `sh pi/install.sh` makes the radio a user
-service (`pi/terradio.service`, with lingering, after PipeWire) and adds the
-monthly refresh (`pi/terradio-stations.timer`: `--refresh-stations` swaps a
+service (`pi/worlddeskradio.service`, with lingering, after PipeWire) and adds the
+monthly refresh (`pi/worlddeskradio-stations.timer`: `--refresh-stations` swaps a
 new list in only when it's complete; the radio restarts on it when quiet).
 Standby fades through `wpctl`; stations fade in through mpv's control socket.
 Unplugged and plugged back in, it played again by itself after 40–60 s. Boot
@@ -581,7 +581,7 @@ Radio New Vegas already mid-song, then switch back to Earth and find it where
 you left it.
 
 **Where it stands (2026-11-14):** built and working on the laptop.
-`terradio/worlds.py` loads a world and runs each station by the clock; the
+`worlddeskradio/worlds.py` loads a world and runs each station by the clock; the
 player plays the files (mpv as a playlist, ffplay as one joined ffconcat
 stream); the World card (settings menu and phone page) starts the radio again
 in the world picked. The face takes the `world` and `lines` messages
@@ -652,7 +652,7 @@ files (`tools/bethesda.py` reads its archives and master file):
 
 - **More on the phone page:** the idle-clock delay.
 - **Saved songs straight into Spotify:** today each saved song has a button that
-  opens a Spotify search for it. The full version adds them to a "Terradio"
+  opens a Spotify search for it. The full version adds them to a "World Desk Radio"
   playlist through Spotify's Web API: it needs a free Spotify developer app (its
   client ID) and a one-time sign-in, done on the laptop because Spotify only
   allows plain-http sign-in addresses on the computer itself (127.0.0.1); the

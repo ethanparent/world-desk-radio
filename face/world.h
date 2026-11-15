@@ -228,7 +228,7 @@ static uint32_t stationsVersion;      // changes whenever the list does (or a ga
 
 // --- a game world --------------------------------------------------------------------------------
 // The world and lines messages (face_link.world_messages): a game's map on an otherwise empty
-// globe (terradio/worlds.py). Its lines take the place of Earth's coastlines and borders at every
+// globe (worlddeskradio/worlds.py). Its lines take the place of Earth's coastlines and borders at every
 // zoom; they're built here in PSRAM as they arrive. A world message with no name is Earth again.
 static const int16_t LINE_BREAK = -32768;    // in a lines message: ends one line, starts the next
 static bool inWorld;                         // drawing a game world, not Earth

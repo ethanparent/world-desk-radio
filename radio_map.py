@@ -1,4 +1,4 @@
-"""Terradio with the round map: the finished radio's screen, in a window on the laptop.
+"""World Desk Radio with the round map: the finished radio's screen, in a window on the laptop.
 
 Start it with:  python radio.py --map      (same options as radio.py, plus --scale,
                 --theme, and --size 240 to preview the 1.28" fallback screen)
@@ -46,29 +46,29 @@ import sys
 import time
 from pathlib import Path
 
-from terradio.ball_light import BallLight
-from terradio.clockradio import (ALARM_FADE_S, SNOOZE_FADE_S, SNOOZE_MIN, STANDBY_FADE_S, Alarm, SleepTimer,
+from worlddeskradio.ball_light import BallLight
+from worlddeskradio.clockradio import (ALARM_FADE_S, SNOOZE_FADE_S, SNOOZE_MIN, STANDBY_FADE_S, Alarm, SleepTimer,
                                   next_alarm)
-from terradio.companion import Companion
-from terradio.connectivity import BluezBluetooth, FakeBluetooth, FakeWiFi, NetworkManagerWiFi
-from terradio import stations as station_db
-from terradio.controls import BALL_STEP, ZOOMS_KM, Controls
-from terradio.dial import Dial
-from terradio.face_link import FaceLink, cut, face_state, loopback
-from terradio.favorites import Favorites
-from terradio.health import StationHealth
-from terradio.liked import LikedSongs, spotify_url
-from terradio.mixer import SystemMixer
-from terradio.panels import AlarmCard, BluetoothMenu, PhoneRemote, SettingsMenu, WifiSetup, WorldMenu
-from terradio.player import Player
-from terradio.settings import Settings
-from terradio.setup_page import SetupServer
-from terradio.stations import StationSearch, place
-from terradio.themes import THEMES, get_theme
-from terradio.updater import Updater
-from terradio.weather import SKIES, Weather
-from terradio.worldtime import fmt_time
-from terradio import worlds as world_db
+from worlddeskradio.companion import Companion
+from worlddeskradio.connectivity import BluezBluetooth, FakeBluetooth, FakeWiFi, NetworkManagerWiFi
+from worlddeskradio import stations as station_db
+from worlddeskradio.controls import BALL_STEP, ZOOMS_KM, Controls
+from worlddeskradio.dial import Dial
+from worlddeskradio.face_link import FaceLink, cut, face_state, loopback
+from worlddeskradio.favorites import Favorites
+from worlddeskradio.health import StationHealth
+from worlddeskradio.liked import LikedSongs, spotify_url
+from worlddeskradio.mixer import SystemMixer
+from worlddeskradio.panels import AlarmCard, BluetoothMenu, PhoneRemote, SettingsMenu, WifiSetup, WorldMenu
+from worlddeskradio.player import Player
+from worlddeskradio.settings import Settings
+from worlddeskradio.setup_page import SetupServer
+from worlddeskradio.stations import StationSearch, place
+from worlddeskradio.themes import THEMES, get_theme
+from worlddeskradio.updater import Updater
+from worlddeskradio.weather import SKIES, Weather
+from worlddeskradio.worldtime import fmt_time
+from worlddeskradio import worlds as world_db
 
 ROOT = Path(__file__).resolve().parent
 FAVORITES_PATH = ROOT / "favorites.json"
@@ -131,9 +131,9 @@ def run(args, stations, backend, static_wav, lat=None, lon=None):
     updater.start()
     extras = Extras(dial, controls, settings, companion, stations, weather=Weather(), updater=updater,
                     world=world)
-    if os.environ.pop("TERRADIO_UPDATED", None):
+    if os.environ.pop("WORLDDESKRADIO_UPDATED", None):
         controls.say("Software updated")
-    if os.environ.pop("TERRADIO_NEW_WORLD", None):
+    if os.environ.pop("WORLDDESKRADIO_NEW_WORLD", None):
         controls.say(world.title if world is not None else "Earth")
     if spot.get("zoom") in [z or 0 for z in controls.zooms]:
         controls.zoom = [z or 0 for z in controls.zooms].index(spot.get("zoom"))
@@ -195,7 +195,7 @@ def run(args, stations, backend, static_wav, lat=None, lon=None):
     if getattr(args, "headless", False):
         knobs = None
         if ON_PI and not getattr(args, "no_knobs", False):
-            from terradio.knobs import Knobs
+            from worlddeskradio.knobs import Knobs
             if getattr(args, "ball_turn", None) is not None:
                 settings.update(ball_turn=args.ball_turn)
             if getattr(args, "ball_mirror", None) is not None:
@@ -393,9 +393,9 @@ class MapWindow:
         # Only the window draws the map, so only it loads the drawing code and the coastlines.
         from PIL import Image
 
-        from terradio.map_view import FaceScreen
-        from terradio.screen import PygameWindow
-        from terradio.virtual_face import VirtualFace
+        from worlddeskradio.map_view import FaceScreen
+        from worlddeskradio.screen import PygameWindow
+        from worlddeskradio.virtual_face import VirtualFace
 
         self.size = size = args.size
         compare = getattr(args, "compare", False)

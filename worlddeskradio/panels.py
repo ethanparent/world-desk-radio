@@ -272,7 +272,7 @@ class WifiSetup:
     and type its password with the phone's keyboard. Thread-safe: the page calls in from the
     web server's thread."""
 
-    HOTSPOT = "Terradio setup"
+    HOTSPOT = "World Desk Radio setup"
     CONNECTED_S = 3.0         # "Connected" stays up this long, then the card closes
     FAILED_S = 4.0            # "Couldn't connect" stays up this long, then back to the QR code
 

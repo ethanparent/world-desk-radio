@@ -8,7 +8,7 @@ What it writes (all generated, so they're not in git; run this again after a sta
 
     data_coast_110m.h, data_coast_50m.h, data_coast_10m.h
     data_border_110m.h, data_border_50m.h, data_border_10m.h
-        Natural Earth coastlines and country borders (terradio/coastlines.py; the borders are
+        Natural Earth coastlines and country borders (worlddeskradio/coastlines.py; the borders are
         drawn only when the state message says "borders"), each point a unit vector (x, y, z)
         times 32767 in int16. The face turns the globe with one 3x3 multiply per point and needs
         no sin or cos. Each coastline is cut into runs of up to 32 segments, and each run has a
@@ -17,7 +17,7 @@ What it writes (all generated, so they're not in git; run this again after a sta
         so each run is drawn as a polyline of its own.
     data_stations.h
         Station positions as int16 (lat, lon) in 1/180ths of a degree: the same format as the
-        stations message (terradio/face_link.py). The face can draw the dots before the Pi has
+        stations message (worlddeskradio/face_link.py). The face can draw the dots before the Pi has
         booted; the Pi sends a fresh list when it connects.
     data_themes.h
         The color themes from map_view.THEMES.
@@ -45,10 +45,10 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from terradio import coastlines                                                  # noqa: E402
-from terradio import stations as station_db                                      # noqa: E402
-from terradio.face_link import POS_SCALE, pack_positions                         # noqa: E402
-from terradio.map_view import SIZE, THEMES, radius_for_view, width_for_zoom     # noqa: E402
+from worlddeskradio import coastlines                                                  # noqa: E402
+from worlddeskradio import stations as station_db                                      # noqa: E402
+from worlddeskradio.face_link import POS_SCALE, pack_positions                         # noqa: E402
+from worlddeskradio.map_view import SIZE, THEMES, radius_for_view, width_for_zoom     # noqa: E402
 
 Q = 32767                 # int16 scale for unit vectors
 RUN = 32                  # segments per run
@@ -242,7 +242,7 @@ def write_themes(out_dir):
     for t in THEMES:
         vals = [f"{{{c[0]},{c[1]},{c[2]}}}" for c in (getattr(t, name) for name in colors)]
         rows.append(f'  {{"{t.name}", {", ".join(vals)}, {t.crosshair[3]}}}')
-    text = (HEADER.format(src=" from terradio/map_view.py THEMES")
+    text = (HEADER.format(src=" from worlddeskradio/map_view.py THEMES")
             + "typedef struct { uint8_t r, g, b; } FaceColor;\n\n"
             + "// The same fields as map_view.Theme; crosshair's opacity is in crosshair_alpha.\n"
             + "typedef struct {\n  const char *name;\n"
@@ -277,7 +277,7 @@ PUNCTUATION = "‐‑‒–—―‘’‚‛“”„‟†‡•…‰′″�
 def _font_file(role):
     """The first font of map_view's list for this role that's on this computer."""
     from PIL import ImageFont
-    from terradio.map_view import FONT_FILES
+    from worlddeskradio.map_view import FONT_FILES
     for name in FONT_FILES[role] + (FONT_FILES["regular"] if role != "regular" else ()):
         try:
             return ImageFont.truetype(name, 10).path
@@ -365,7 +365,7 @@ def _c_bytes(data):
 
 
 def write_fonts(stations, out_dir):
-    from terradio.stations import place
+    from worlddeskradio.stations import place
     station_chars = set()
     for s in stations:
         station_chars |= set(s["name"] + place(s))
@@ -430,8 +430,8 @@ def write_icons(out_dir):
     """map_view's symbols at 480 px, as masks: (name, mask, x, y), x and y where the mask's top
     left goes relative to the point it's drawn at (or on screen, for the crosshair and signal)."""
     from PIL import Image, ImageDraw
-    from terradio.map_view import SIGNAL_Y, MapView
-    from terradio.weather import SKIES
+    from worlddeskradio.map_view import SIGNAL_Y, MapView
+    from worlddeskradio.weather import SKIES
     view = MapView([], SIZE)
     k = view.k
     icons = []
@@ -461,7 +461,7 @@ def write_icons(out_dir):
     cr = 2.2 * k                    # a city's ring (MapView._draw_cities)
     shape("CITY_RING", cr, lambda d, o: d.ellipse([o - cr, o - cr, o + cr, o + cr], outline=255,
                                                   width=max(1, round(0.7 * k))))
-    text = [HEADER.format(src=" from terradio/map_view.py's symbols at 480 px"),
+    text = [HEADER.format(src=" from worlddeskradio/map_view.py's symbols at 480 px"),
             "typedef struct {\n  const uint8_t *mask;   // 8-bit coverage, row by row\n  uint16_t w, h;\n"
             "  int16_t x, y;          // top left, from where it's drawn\n} FaceIcon;\n\n"]
     for name, mask, x, y in icons:

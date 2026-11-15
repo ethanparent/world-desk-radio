@@ -1,9 +1,9 @@
-// Terradio: the round face. Draws the radio's night globe on the Waveshare ESP32-S3-LCD-2.8C from
+// World Desk Radio: the round face. Draws the radio's night globe on the Waveshare ESP32-S3-LCD-2.8C from
 // the Pi's messages over USB (PLAN.md, "Messages from the Pi to the face").
 //
 // The Pi works out everything (where the dial is, the station, the volume, the theme) and sends it
 // as a `state` line up to 30 times a second; this program only draws, copying the laptop preview
-// (terradio/map_view.py) as closely as it can. Before the Pi says anything, and 3 s after it last
+// (worlddeskradio/map_view.py) as closely as it can. Before the Pi says anything, and 3 s after it last
 // did, it shows a slowly turning globe.
 //
 // How a frame is made (face/bench tried each part on the board; its README has the numbers):

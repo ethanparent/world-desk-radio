@@ -51,12 +51,12 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def _worlds_dir():
-    """Where the worlds are: $TERRADIO_WORLDS, else ~/terradio-worlds if there is one (the Pi:
+    """Where the worlds are: $WORLDDESKRADIO_WORLDS, else ~/world-desk-radio-worlds if there is one (the Pi:
     a few GB is too much for the overlay's small writable image, which holds the checkout), else
     worlds/ in the checkout (the laptop)."""
-    if os.environ.get("TERRADIO_WORLDS"):
-        return Path(os.environ["TERRADIO_WORLDS"])
-    home = Path.home() / "terradio-worlds"
+    if os.environ.get("WORLDDESKRADIO_WORLDS"):
+        return Path(os.environ["WORLDDESKRADIO_WORLDS"])
+    home = Path.home() / "world-desk-radio-worlds"
     return home if home.is_dir() else ROOT / "worlds"
 
 

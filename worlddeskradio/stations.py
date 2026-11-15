@@ -5,8 +5,8 @@ database of internet radio stations. We download the whole list once, keep
 only stations that are known to work and have map coordinates, and drop
 duplicates. Hand-added stations from my-stations.json are merged on top.
 
-Run on its own:  python -m terradio.stations            (download or resume)
-                 python -m terradio.stations --fresh    (start over)
+Run on its own:  python -m worlddeskradio.stations            (download or resume)
+                 python -m worlddeskradio.stations --fresh    (start over)
 """
 
 import json
@@ -27,7 +27,7 @@ CLEAN_PATH = DATA_DIR / "stations.json"
 PAGE_SIZE = 500
 MY_STATIONS_PATH = ROOT / "my-stations.json"
 
-USER_AGENT = "Terradio/0.1 (hobby world-map radio prototype)"
+USER_AGENT = "WorldDeskRadio/0.1 (hobby world-map radio prototype)"
 PRIMARY_SERVER = "de1.api.radio-browser.info"
 DNS_ALL = "all.api.radio-browser.info"
 

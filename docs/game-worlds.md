@@ -1,6 +1,6 @@
 # Game worlds
 
-> Terradio ships no game content. The tool below reads the files of a copy of the game you own
+> World Desk Radio ships no game content. The tool below reads the files of a copy of the game you own
 > and writes the world into `worlds/`, which `.gitignore` keeps out of the repo. Don't share or
 > publish what it makes. Fallout is a trademark of Bethesda Softworks; this project isn't
 > affiliated with or endorsed by Bethesda.
@@ -37,14 +37,14 @@ and its places are labeled as you zoom in, as Earth's cities are.
 - **Live by the clock.** A world's station plays from files, but like the
   game's radio it has been playing its list round and round since 1 January
   2026, so tuning in lands mid-song and coming back later finds it further on.
-  The song shown comes from the same clock (`terradio/worlds.py`).
+  The song shown comes from the same clock (`worlddeskradio/worlds.py`).
 - **Not in git.** `worlds/` is the game's music and voices, for this radio only,
   so `.gitignore` keeps it out of the repo and the updater leaves it alone.
-- **On the Pi,** the worlds go in `~/terradio-worlds/` (the checkout's
+- **On the Pi,** the worlds go in `~/world-desk-radio-worlds/` (the checkout's
   writable spot is too small for them). With the overlay off:
 
   ```bash
-  scp -r worlds/mojave pi@terradio.local:terradio-worlds/
+  scp -r worlds/mojave pi@worlddeskradio.local:worlddeskradio-worlds/
   ```
 
   Then restart the radio and the World entry appears in the settings menu. The

@@ -15,10 +15,10 @@ whole world); radius_for_view() works it out. Camera eases the view after the di
 FaceScreen puts the two together and draws a FaceState (face_link.py), the same state the face gets.
 
 Try it without a window:
-    python -m terradio.map_view --png map.png --at 51.5,-0.1 [--km 500 | --world] [--size 240]
+    python -m worlddeskradio.map_view --png map.png --at 51.5,-0.1 [--km 500 | --world] [--size 240]
                                  [--theme radar]
-    python -m terradio.map_view --sheet themes.png   # every theme side by side
-    python -m terradio.map_view --bench          # frame-time measurement, both sizes
+    python -m worlddeskradio.map_view --sheet themes.png   # every theme side by side
+    python -m worlddeskradio.map_view --bench          # frame-time measurement, both sizes
 """
 
 import argparse

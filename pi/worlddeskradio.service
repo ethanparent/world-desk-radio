@@ -1,21 +1,21 @@
-# Terradio as an appliance: starts at boot and comes back if it ever stops.
+# World Desk Radio as an appliance: starts at boot and comes back if it ever stops.
 # A user service (it runs as you, beside PipeWire, which plays the sound). pi/install.sh puts it
 # in ~/.config/systemd/user/ and turns on "lingering", so it starts at boot without a login.
 #
-#   systemctl --user status terradio       is it running?
-#   journalctl --user-unit terradio -f       its lines as they come
-#   systemctl --user restart terradio      start it again (after copying new code, say)
-#   systemctl --user stop terradio         stop it (to run it by hand over SSH)
+#   systemctl --user status worlddeskradio       is it running?
+#   journalctl --user-unit worlddeskradio -f       its lines as they come
+#   systemctl --user restart worlddeskradio      start it again (after copying new code, say)
+#   systemctl --user stop worlddeskradio         stop it (to run it by hand over SSH)
 
 [Unit]
-Description=Terradio
+Description=World Desk Radio
 After=pipewire.service pipewire-pulse.service wireplumber.service
 Wants=pipewire.service wireplumber.service
 
 [Service]
-WorkingDirectory=%h/terradio
+WorkingDirectory=%h/world-desk-radio
 # No terminal here, so no keys: the trackball, the knobs and the phone page (--lan) are the controls.
-ExecStart=%h/terradio/.venv/bin/python %h/terradio/radio.py --headless --face /dev/ttyACM0 --lan
+ExecStart=%h/world-desk-radio/.venv/bin/python %h/world-desk-radio/radio.py --headless --face /dev/ttyACM0 --lan
 Environment=PYTHONUNBUFFERED=1
 Restart=always
 RestartSec=3

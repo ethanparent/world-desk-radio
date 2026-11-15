@@ -15,10 +15,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from terradio import knobs as kn                                         # noqa: E402
-from terradio.connectivity import BluezBluetooth, NetworkManagerWiFi, _split_terse  # noqa: E402
-from terradio.mixer import SystemMixer                                   # noqa: E402
-from terradio.knobs import Debounced, Presses, Quadrature, ball_directions  # noqa: E402
+from worlddeskradio import knobs as kn                                         # noqa: E402
+from worlddeskradio.connectivity import BluezBluetooth, NetworkManagerWiFi, _split_terse  # noqa: E402
+from worlddeskradio.mixer import SystemMixer                                   # noqa: E402
+from worlddeskradio.knobs import Debounced, Presses, Quadrature, ball_directions  # noqa: E402
 
 FORWARD = [(0, 1), (0, 0), (1, 0), (1, 1)]          # one detent forward, from rest at 11
 BACK = [(1, 0), (0, 0), (0, 1), (1, 1)]
@@ -303,7 +303,7 @@ def check_wifi():
     nets = w.scan()
     check([n.ssid for n in nets] == ["Home", "Cafe:Guest"] and nets[0].signal == 82 and not nets[1].secure,
           f"networks: strongest of each, no hidden ones, open ones marked ({nets})")
-    w.start_hotspot("Terradio setup", "12345678")
+    w.start_hotspot("World Desk Radio setup", "12345678")
     check(wait_for(lambda: any(a[:3] == ["sudo", "-n", "nmcli"] for a in run.ran)),
           "the hotspot goes through sudo when nmcli isn't allowed")
     before = len(run.ran)

@@ -22,7 +22,7 @@
 
 static inline uint32_t cycles() { return esp_cpu_get_cycle_count(); }
 
-// --- colors: the night theme from terradio/themes.py --------------------------------------------
+// --- colors: the night theme from worlddeskradio/themes.py --------------------------------------------
 struct Rgbf {
   float r, g, b;
 };

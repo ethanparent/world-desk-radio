@@ -140,7 +140,7 @@ class MpvControl:
 
     def __init__(self):
         folder = os.environ.get("XDG_RUNTIME_DIR") or tempfile.gettempdir()
-        self.path = os.path.join(folder, f"terradio-mpv-{os.getpid()}-{next(self._numbers)}.sock")
+        self.path = os.path.join(folder, f"worlddeskradio-mpv-{os.getpid()}-{next(self._numbers)}.sock")
         self._sock = None
         self._lock = threading.Lock()
         self._ramp = 0                    # bumps with each ramp: an older one stops
@@ -249,7 +249,7 @@ def find_backend():
 
 
 class Player:
-    READY_MARK = "TERRADIO_PLAYING"
+    READY_MARK = "WORLDDESKRADIO_PLAYING"
 
     def __init__(self, backend, path, static_wav, volume=80, mixer=None):
         self.backend = backend
@@ -348,7 +348,7 @@ class Player:
             if skip:
                 lines.append(f"inpoint {skip:.3f}")
         self._clear_cue_file()
-        fd, self._cue_file = tempfile.mkstemp(prefix="terradio-", suffix=".ffconcat")
+        fd, self._cue_file = tempfile.mkstemp(prefix="worlddeskradio-", suffix=".ffconcat")
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
         return [self.path, "-nodisp", "-autoexit", "-hide_banner", "-loglevel", "info", "-volume", str(self.volume),

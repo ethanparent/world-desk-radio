@@ -129,7 +129,7 @@ class FakeWiFi:
 
     NETWORKS = (("Home Wi-Fi", 82, True), ("Home Wi-Fi 5G", 74, True), ("NETGEAR-2F7A", 51, True),
                 ("TelstraA1B2", 38, True), ("Cafe Guest", 30, False))
-    PASSWORD = "terradio"
+    PASSWORD = "worlddeskradio"
     CONNECT_S = 2.5
 
     def __init__(self, clock=time.monotonic):
@@ -370,7 +370,7 @@ class NetworkManagerWiFi:
     phone, every name must lead there and port 80 must reach the page: pi/install.sh sets that up
     (a dnsmasq line and a NetworkManager dispatcher script)."""
 
-    HOTSPOT = "terradio-setup"            # NetworkManager's name for the hotspot connection
+    HOTSPOT = "worlddeskradio-setup"            # NetworkManager's name for the hotspot connection
     SCAN_S = 20                           # a list this fresh is good enough
     ONLINE_S = 10                         # how often to check for a connection
 

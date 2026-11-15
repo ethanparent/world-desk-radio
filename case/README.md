@@ -1,4 +1,4 @@
-# Terradio case
+# World Desk Radio case
 
 A desk radio, 108 mm wide × 94 mm deep × 114 mm tall. The front leans back
 10°, with the round 2.8″ face filling it and the Tune and Volume knobs in the
@@ -223,4 +223,4 @@ the ball sits at the left instead.
 
 The case design (everything in this folder) is under
 [CC BY-NC 4.0](LICENSE): print it, change it and share it, with credit, but not
-commercially. The rest of Terradio is under the MIT License.
+commercially. The rest of World Desk Radio is under the MIT License.

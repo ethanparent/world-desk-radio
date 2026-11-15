@@ -25,30 +25,30 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import radio_map                                                                     # noqa: E402
-from terradio import map_view as mv                                                 # noqa: E402
-from terradio import stations as db                                                 # noqa: E402
-from terradio import weather as weather_mod                                         # noqa: E402
-from terradio.ball_light import BallLight                                           # noqa: E402
-from terradio.clockradio import SNOOZE_FADE_S, Alarm, SleepTimer, next_alarm        # noqa: E402
-from terradio.companion import Companion                                            # noqa: E402
-from terradio.controls import DOUBLE_S, Controls                                    # noqa: E402
-from terradio.dial import Dial                                                      # noqa: E402
-from terradio.face_link import FaceState, decode, face_state, state_from_message, state_message  # noqa: E402
-from terradio.favorites import Favorites                                            # noqa: E402
-from terradio.health import StationHealth                                           # noqa: E402
-from terradio.liked import LikedSongs, search_query, spotify_url                    # noqa: E402
-from terradio.map_view import (FaceScreen, Hud, MapView, face_hud, fmt_date,        # noqa: E402
+from worlddeskradio import map_view as mv                                                 # noqa: E402
+from worlddeskradio import stations as db                                                 # noqa: E402
+from worlddeskradio import weather as weather_mod                                         # noqa: E402
+from worlddeskradio.ball_light import BallLight                                           # noqa: E402
+from worlddeskradio.clockradio import SNOOZE_FADE_S, Alarm, SleepTimer, next_alarm        # noqa: E402
+from worlddeskradio.companion import Companion                                            # noqa: E402
+from worlddeskradio.controls import DOUBLE_S, Controls                                    # noqa: E402
+from worlddeskradio.dial import Dial                                                      # noqa: E402
+from worlddeskradio.face_link import FaceState, decode, face_state, state_from_message, state_message  # noqa: E402
+from worlddeskradio.favorites import Favorites                                            # noqa: E402
+from worlddeskradio.health import StationHealth                                           # noqa: E402
+from worlddeskradio.liked import LikedSongs, search_query, spotify_url                    # noqa: E402
+from worlddeskradio.map_view import (FaceScreen, Hud, MapView, face_hud, fmt_date,        # noqa: E402
                                 radius_for_view, spin_offset, width_for_zoom)
-from terradio.player import Player                                                  # noqa: E402
-from terradio.settings import Settings                                              # noqa: E402
-from terradio.setup_page import SetupServer, lan_address                            # noqa: E402
-from terradio.weather import Report, Weather, sky                                   # noqa: E402
+from worlddeskradio.player import Player                                                  # noqa: E402
+from worlddeskradio.settings import Settings                                              # noqa: E402
+from worlddeskradio.setup_page import SetupServer, lan_address                            # noqa: E402
+from worlddeskradio.weather import Report, Weather, sky                                   # noqa: E402
 
 if not db.CLEAN_PATH.exists():
     print("The station list isn't downloaded yet: run  python radio.py --update  first.")
     sys.exit(2)
 
-TMP = Path(tempfile.mkdtemp(prefix="terradio-checks-"))
+TMP = Path(tempfile.mkdtemp(prefix="worlddeskradio-checks-"))
 atexit.register(shutil.rmtree, TMP, ignore_errors=True)
 ok_count = 0
 
@@ -550,8 +550,8 @@ check("an older settings.json's one alarm becomes the first of two",
 
 # Holding both knob buttons: the settings menu. Tune chooses, its press opens that card in the
 # menu's place, and the Volume button closes whichever card is up.
-from terradio.connectivity import FakeBluetooth                                     # noqa: E402
-from terradio.panels import BluetoothMenu, PhoneRemote, SettingsMenu                # noqa: E402
+from worlddeskradio.connectivity import FakeBluetooth                                     # noqa: E402
+from worlddeskradio.panels import BluetoothMenu, PhoneRemote, SettingsMenu                # noqa: E402
 
 rc.close_panel()
 if rc.asleep:

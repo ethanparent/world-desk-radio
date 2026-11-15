@@ -223,7 +223,7 @@ class SetupServer:
 
     @property
     def mdns_url(self):
-        """http://terradio.local:8737/ and the like (avahi on the Pi announces the name), or None
+        """http://worlddeskradio.local:8737/ and the like (avahi on the Pi announces the name), or None
         when the page is only on this computer."""
         if self._host not in ("0.0.0.0", "") or sys.platform == "win32":
             return None

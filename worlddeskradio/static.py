@@ -12,7 +12,7 @@ audio files. It's made of layers, the way a real receiver hisses and crackles:
 Every layer is shaped in the frequency domain over the whole loop, which makes it repeat
 seamlessly: the last sample leads straight into the first, with no crossfade and no click.
 
-    python -m terradio.static        # writes static.wav (the radio does this itself)
+    python -m worlddeskradio.static        # writes static.wav (the radio does this itself)
 """
 
 import wave

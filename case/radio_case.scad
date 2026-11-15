@@ -1,4 +1,4 @@
-// Terradio case: a desk radio with a gently leaning front and the trackball on top.
+// World Desk Radio case: a desk radio with a gently leaning front and the trackball on top.
 // About 108 wide x 94 deep x 114 tall (mm).
 //
 // Open this file in OpenSCAD (free, openscad.org). Press F5 to preview, F6 to

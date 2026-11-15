@@ -2,7 +2,7 @@
 
 `face.ino` is the round face's program: the Waveshare ESP32-S3-LCD-2.8C draws the radio's globe from
 the Pi's messages over USB (PLAN.md, "Messages from the Pi to the face"). It copies the laptop
-preview (`terradio/map_view.py`, `FaceScreen`) as closely as it can: the orthographic globe, the
+preview (`worlddeskradio/map_view.py`, `FaceScreen`) as closely as it can: the orthographic globe, the
 coastlines and borders, the station dots and their glow, the crosshair, the station's name, place
 and song (long ones scroll once), the time and weather slot, toasts, the volume ring, favorite
 stars, city labels, the idle clock and its slow spin, the Bluetooth and Wi-Fi cards (with a QR
@@ -66,11 +66,11 @@ built on.
    (`pgrep -af "radio.py|esptool|mpv"`; stop the radio first if it's running), then:
 
    ```bash
-   ~/terradio/.venv/bin/python -m pip install esptool
+   ~/world-desk-radio/.venv/bin/python -m pip install esptool
    ```
 
    ```bash
-   ~/terradio/.venv/bin/python -m esptool --chip esp32s3 -p /dev/ttyACM0 -b 921600 write_flash -z --flash-mode keep --flash-freq keep --flash-size keep 0x0 face.ino.bootloader.bin 0x8000 face.ino.partitions.bin 0x10000 face.ino.bin
+   ~/world-desk-radio/.venv/bin/python -m esptool --chip esp32s3 -p /dev/ttyACM0 -b 921600 write_flash -z --flash-mode keep --flash-freq keep --flash-size keep 0x0 face.ino.bootloader.bin 0x8000 face.ino.partitions.bin 0x10000 face.ino.bin
    ```
 
    The ESP32-S3's own USB resets into its bootloader by itself (no BOOT button). The addresses are

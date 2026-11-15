@@ -44,7 +44,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT))
 
 from bethesda import BSA, Plugin, heights, position                                    # noqa: E402
-from terradio import worlds                                                         # noqa: E402
+from worlddeskradio import worlds                                                         # noqa: E402
 
 STEAM_GAME = Path(r"C:\Program Files (x86)\Steam\steamapps\common\Fallout New Vegas")
 WORLD_ID = "mojave"
@@ -398,7 +398,7 @@ class Program:
 
     def __init__(self, game, quest):
         self.game, self.quest = game, game.quest_ids[quest]
-        self.rng = random.Random(f"terradio-{quest}")
+        self.rng = random.Random(f"worlddeskradio-{quest}")
         build = {"RadioNewVegas": self._radio_new_vegas, "RadioBlackMountain": self._black_mountain,
                  "vCountryRadioQuest": self._songs_only}.get(quest, self._broadcast)
         self.items = build(quest)

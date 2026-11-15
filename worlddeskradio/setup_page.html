@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>Terradio</title>
+<title>World Desk Radio</title>
 <style>
   :root {
     --bg: #04060c; --card: #0b1424; --card-open: #0f1b30; --line: #1a2840;
@@ -214,7 +214,7 @@
 <main>
   <header>
     <div class="globe" aria-hidden="true"></div>
-    <h1>Terradio</h1>
+    <h1>World Desk Radio</h1>
     <p class="sub" id="sub">Choose the Wi-Fi the radio should use.</p>
   </header>
 
@@ -922,7 +922,7 @@ async function load() {
     $('setup').hidden = true;
     $('radio').hidden = false;
     $('sub').textContent = 'Your radio, from your phone.';
-    document.title = 'Terradio remote';
+    document.title = 'World Desk Radio remote';
     showRadio(await r.json());
     clearInterval(radioTimer);
     radioTimer = setInterval(() => { if (!document.hidden) refresh(); }, 1500);
