@@ -5,9 +5,9 @@ desk.**
 
 Terradio puts nearly 13,000 live stations from over 180 countries on a glowing
 globe. Roll the trackball to spin the world to Lagos, Reykjavík, Seoul or a
-small town in Chile. While the globe moves you hear static, and when you stop,
-the nearest station tunes in and you're hearing whatever is on air there right
-now: local news, talk shows, and music you'd never find at home. It's inspired
+small town in Chile. Stop, and the nearest station tunes in: whatever is on air
+there right now, from local news and talk shows to music you'd never find at
+home. It's inspired
 by [Radio Garden](https://radio.garden), built as a real radio with a real dial.
 
 <p align="center">
@@ -26,9 +26,9 @@ mouse and keyboard standing in for the trackball and knobs.
 
 ## What it does
 
-- **Roll and listen.** Static while you roll, then the nearest live station
-  fades in. If a stream doesn't start within 5 seconds, it moves on to the next
-  nearest, and stations that keep failing are skipped for a few days.
+- **Stop anywhere and something is playing.** If a station's stream doesn't
+  start within 5 seconds, it moves on to the next nearest, and stations that
+  keep failing are skipped for a few days.
 - **Three zoom levels** (2,000 km, 500 km, the whole world), plus "surprise me",
   which flies you to a random station somewhere on Earth.
 - **On the screen:** the station's name and place, the song playing (when the
@@ -133,11 +133,8 @@ standoff kit.
   comes straight from each station's own server. You can add or correct
   stations in [`my-stations.json`](docs/laptop.md#your-own-stations).
 - **The dial** (`terradio/dial.py`) turns a position into the nearest station,
-  waits for the globe to settle, plays static while you move, and falls back to
-  the next station when a stream won't start.
-- **The static** is generated (`terradio/static.py`): a seamless 24-second loop
-  of hiss, distant lightning crackles, faint whistles and a far-off voice. There
-  are no audio files in the repo.
+  waits for the globe to settle, and falls back to the next station when a
+  stream won't start.
 - **The map** (`terradio/map_view.py`) is drawn with numpy and Pillow. It's the
   design reference: on the real radio the face redraws the same picture itself
   from the messages it gets, and a test checks that those messages alone
