@@ -1,10 +1,14 @@
 # Terradio
 
-**A desk radio with a glowing globe for a face.** Roll the trackball to turn the
-world under a crosshair, and Terradio plays live radio from the station nearest
-that spot. While the globe is moving you hear static; when it stops, the nearest
-station fades in. It's inspired by [Radio Garden](https://radio.garden), built
-as a physical radio you can keep on a desk.
+**Listen to live radio from anywhere in the world, on a radio that sits on your
+desk.**
+
+Terradio puts nearly 13,000 live stations from over 180 countries on a glowing
+globe. Roll the trackball to spin the world to Lagos, Reykjavík, Seoul or a
+small town in Chile. While the globe moves you hear static, and when you stop,
+the nearest station tunes in and you're hearing whatever is on air there right
+now: local news, talk shows, and music you'd never find at home. It's inspired
+by [Radio Garden](https://radio.garden), built as a real radio with a real dial.
 
 <p align="center">
   <img src="case/renders/front.png" width="300" alt="The Terradio case: a small dark box with a round screen, two knobs and a trackball on top">
@@ -12,10 +16,10 @@ as a physical radio you can keep on a desk.
   <img src="docs/images/europe.png" width="300" alt="The round screen over Europe: thousands of glowing station dots, the crosshair over the Black Forest, tuned to Schwarzwaldradio">
 </p>
 
-About 13,000 stations with known locations, a 2.8″ round screen, a trackball
-with lights under the ball, and two push knobs: **Tune** steps through the
-stations around where you stopped, and **Volume** does what it says. Sound comes
-from a built-in speaker or Bluetooth headphones.
+The globe is a 2.8″ round screen. Beside it are a trackball with lights under
+the ball and two push knobs: **Tune** steps through the other stations around
+where you stopped, and **Volume** does what it says. Sound comes from a built-in
+speaker or Bluetooth headphones.
 
 You don't need any hardware to try it. The same radio runs on a laptop, with the
 mouse and keyboard standing in for the trackball and knobs.
