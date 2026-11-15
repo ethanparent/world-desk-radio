@@ -7,8 +7,8 @@ Terradio puts nearly 13,000 live stations from over 180 countries on a glowing
 globe. Roll the trackball to spin the world to Lagos, Reykjavík, Seoul or a
 small town in Chile. Stop, and the nearest station tunes in: whatever is on air
 there right now, from local news and talk shows to music you'd never find at
-home. It's inspired
-by [Radio Garden](https://radio.garden), built as a real radio with a real dial.
+home. It's inspired by [Radio Garden](https://radio.garden), built as a real
+radio with a real dial.
 
 <p align="center">
   <img src="case/renders/front.png" width="300" alt="The Terradio case: a small dark box with a round screen, two knobs and a trackball on top">
