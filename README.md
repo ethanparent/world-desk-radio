@@ -11,6 +11,12 @@ home. It's inspired by [Radio Garden](https://radio.garden), built as a real
 radio with a real dial.
 
 <p align="center">
+  <img src="docs/images/radio-on.jpg" width="640" alt="World Desk Radio switched on, on a wooden desk: a dark printed box with two knobs and a trackball on top, its round screen glowing with a map of Portugal and tuned to Antena 1 in Lisbon">
+  <br>
+  <sub>A mockup of the finished radio: the case design, with a real frame from its screen.</sub>
+</p>
+
+<p align="center">
   <img src="case/renders/front.png" width="300" alt="The World Desk Radio case: a small dark box with a round screen, two knobs and a trackball on top">
   &nbsp;&nbsp;
   <img src="docs/images/europe.png" width="300" alt="The round screen over Europe: thousands of glowing station dots, the crosshair over the Black Forest, tuned to Schwarzwaldradio">
