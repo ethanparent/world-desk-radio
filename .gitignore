@@ -1,0 +1,41 @@
+# Downloaded data: stations (refresh with: python radio.py --update) and
+# Natural Earth coastlines (fetched automatically when missing)
+data/
+
+# Generated audio
+static.wav
+
+# Generated map data for the face (python tools/face_data.py)
+face/data_*.h
+
+# Your saved favorites and where you left off (personal; copy them to the Pi by hand if you want)
+favorites.json
+favorites.broken.json
+settings.json
+liked.json
+health.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Build output: the face's compiled firmware, and G-code sliced for one printer
+face/build/
+face/bench/build/
+case/gcode/
+
+# Game worlds (python tools/fnv_world.py): copied from games you own, for this radio only
+worlds/
+favorites-*.json
+
+# Scratch output from tests and tools
+*.log

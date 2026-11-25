@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>World Desk Radio</title>
+<style>
+  :root {
+    --bg: #04060c; --card: #0b1424; --card-open: #0f1b30; --line: #1a2840;
+    --text: #eef1f5; --dim: #8a9aaa; --live: #ffba54; --live-ink: #1d1203; --warn: #e8705c;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body {
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    min-height: 100vh; padding: max(28px, env(safe-area-inset-top)) 16px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 420px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 24px; }
+  .globe {
+    width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, #152745 0 55%, #0a1324 70%, #04060c 72%);
+    box-shadow: 0 0 0 1px #22406a inset, 0 0 24px rgba(34, 78, 140, .45);
+    position: relative;
+  }
+  .globe::before, .globe::after {
+    content: ""; position: absolute; border-radius: 50%; background: var(--live);
+    box-shadow: 0 0 8px 2px rgba(255, 136, 36, .8);
+  }
+  .globe::before { width: 5px; height: 5px; left: 24px; top: 22px; }
+  .globe::after { width: 4px; height: 4px; left: 38px; top: 34px; }
+  h1 { font-size: 22px; font-weight: 650; letter-spacing: .2px; margin: 0 0 4px; }
+  .sub { color: var(--dim); margin: 0; }
+  .demo {
+    font-size: 14px; color: var(--dim); background: #10151f; border: 1px dashed #2a3446;
+    border-radius: 10px; padding: 10px 12px; margin: 0 0 16px;
+  }
+  .demo b { color: var(--text); font-weight: 600; }
+
+  /* Wi-Fi setup */
+  .list { display: grid; gap: 8px; }
+  .net { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .net.open { background: var(--card-open); border-color: #2a4064; }
+  .row {
+    all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 15px 16px; cursor: pointer;
+  }
+  .row:focus-visible { outline: 2px solid var(--live); outline-offset: -2px; border-radius: 14px; }
+  .name { flex: 1; font-weight: 550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lock { width: 14px; height: 14px; fill: var(--dim); flex: none; }
+  .bars { display: flex; align-items: flex-end; gap: 2px; height: 14px; flex: none; }
+  .bars i { display: block; width: 3px; border-radius: 1px; background: #2c3a50; }
+  .bars i:nth-child(1) { height: 4px; } .bars i:nth-child(2) { height: 7px; }
+  .bars i:nth-child(3) { height: 10px; } .bars i:nth-child(4) { height: 14px; }
+  .bars i.on { background: var(--text); }
+  form { display: grid; gap: 10px; padding: 0 16px 16px; }
+  .field { position: relative; }
+  input[type=password], input[type=text], input[type=search] {
+    width: 100%; font: inherit; color: var(--text); background: #060b16;
+    border: 1px solid #2a3a54; border-radius: 10px; padding: 12px 64px 12px 12px;
+  }
+  input:focus { outline: none; border-color: var(--live); }
+  .show {
+    all: unset; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; color: var(--dim); cursor: pointer; padding: 6px;
+  }
+  .go {
+    all: unset; text-align: center; font-weight: 650; background: var(--live); color: var(--live-ink);
+    border-radius: 10px; padding: 12px; cursor: pointer;
+  }
+  .go:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .again { all: unset; display: block; margin: 18px auto 0; color: var(--dim); font-size: 15px; cursor: pointer; }
+  .status { text-align: center; padding: 28px 8px; }
+  .status.bad { padding: 4px 8px 18px; }
+  .status h2 { font-size: 19px; margin: 14px 0 6px; }
+  .status p { color: var(--dim); margin: 0 auto; max-width: 320px; }
+  .status.bad h2 { color: var(--warn); }
+  .spin {
+    width: 34px; height: 34px; margin: 0 auto; border-radius: 50%;
+    border: 3px solid #23324a; border-top-color: var(--live); animation: spin 1s linear infinite;
+  }
+  .tick { width: 40px; height: 40px; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } }
+
+  /* The companion: what's playing, the alarm, the sleep timer, the world tour, liked songs */
+  .cards { display: grid; gap: 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+  .card h2 { font-size: 13px; font-weight: 650; letter-spacing: .6px; text-transform: uppercase;
+             color: var(--dim); margin: 0 0 10px; }
+  .now .station { font-size: 20px; font-weight: 650; margin: 0; }
+  .now .place, .muted { color: var(--dim); margin: 2px 0 0; }
+  .now .song { margin: 10px 0 0; }
+  .line { display: flex; align-items: center; gap: 12px; }
+  .line .grow { flex: 1; min-width: 0; }
+  .switch {
+    all: unset; flex: none; position: relative; width: 50px; height: 30px; border-radius: 15px;
+    background: #24324a; cursor: pointer; transition: background .2s;
+  }
+  .switch::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--text); transition: transform .2s;
+  }
+  .switch[aria-checked=true] { background: var(--live); }
+  .switch[aria-checked=true]::after { transform: translateX(20px); background: var(--live-ink); }
+  .switch:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  input[type=time] {
+    font-family: inherit; font-size: 28px; font-weight: 600; line-height: 1.1; color: var(--text);
+    background: transparent; border: 0; padding: 0; color-scheme: dark;
+  }
+  input[type=time]:focus { outline: none; }
+  .small { all: unset; font-size: 14px; color: var(--live); cursor: pointer; margin-top: 10px; display: inline-block; }
+  .seg { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .seg button {
+    all: unset; text-align: center; padding: 10px 0; border-radius: 10px; background: #0f1a2c;
+    border: 1px solid var(--line); font-size: 15px; cursor: pointer;
+  }
+  .seg button[aria-pressed=true] { background: var(--live); color: var(--live-ink); border-color: var(--live); font-weight: 650; }
+  .seg button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .liked { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .liked li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--line); }
+  .liked li:first-child { border-top: 0; padding-top: 2px; }
+  .liked .song { font-weight: 600; }
+  .liked .from { color: var(--dim); font-size: 14px; }
+  .x { all: unset; flex: none; color: var(--dim); font-size: 20px; line-height: 1; padding: 2px 6px; cursor: pointer; }
+  .spot { flex: none; display: grid; place-items: center; width: 32px; height: 32px; margin-top: -2px; border-radius: 50%; }
+  .spot svg { width: 26px; height: 26px; }
+  .spot:focus-visible { outline: 2px solid var(--live); outline-offset: 2px; }
+  .x:focus-visible { outline: 2px solid var(--live); border-radius: 6px; }
+  .heart { color: var(--live); }
+  .foot { color: var(--dim); font-size: 13px; text-align: center; margin: 18px 0 0; }
+
+  /* The remote: what's playing, the weather there, the buttons and the volume */
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .head h2 { margin: 0; }
+  .round {
+    all: unset; flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+    color: var(--dim); background: #0f1a2c; border: 1px solid var(--line); cursor: pointer;
+  }
+  .round svg { width: 19px; height: 19px; }
+  .round[aria-pressed=true] { color: var(--live-ink); background: var(--live); border-color: var(--live); }
+  .there { display: flex; align-items: center; gap: 8px; color: var(--dim); margin: 8px 0 0; }
+  .there svg { flex: none; width: 24px; height: 22px; color: var(--text); }
+  .gap { fill: var(--card); stroke: var(--card); stroke-width: 2.2; }
+  .pad { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr 1.25fr; gap: 8px; margin-top: 16px; }
+  .pad button {
+    all: unset; display: grid; place-items: center; height: 54px; border-radius: 14px; cursor: pointer;
+    color: var(--text); background: #0f1a2c; border: 1px solid var(--line); -webkit-tap-highlight-color: transparent;
+  }
+  .pad button svg { width: 23px; height: 23px; }
+  .pad button:active { background: #1a2a46; }
+  .pad button.lit { color: var(--live); border-color: #4a3a22; }
+  .pad button:focus-visible, .round:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .vol { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  .vol .num { width: 2.2em; text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .vol .round { width: 36px; height: 36px; }
+  input[type=range] { flex: 1; min-width: 0; height: 32px; margin: 0; accent-color: var(--live); }
+  .favs li { align-items: center; }
+  .favs .pick { all: unset; flex: 1; min-width: 0; cursor: pointer; }
+  .favs .pick:focus-visible { outline: 2px solid var(--live); border-radius: 6px; }
+  .favs .song, .favs .from { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .favs .on .song::before { content: "★ "; color: var(--live); }
+  .seg.two { grid-template-columns: repeat(2, 64px); }
+  .seg.worlds { grid-template-columns: 1fr; }
+  /* The Map card: the worlds, and the color themes as little globes */
+  h3.sub { font-size: 15px; font-weight: 600; color: var(--dim); margin: 0 0 8px; }
+  #world-part, #zoom-part { margin-bottom: 18px; }
+  .seg.zooms { grid-template-columns: repeat(3, 1fr); }
+  .themes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .themes button {
+    all: unset; display: grid; justify-items: center; gap: 5px; padding: 8px 0 7px; border-radius: 12px; cursor: pointer;
+    background: #0f1a2c; border: 1px solid var(--line); font-size: 13px; color: var(--dim);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .themes button svg { width: 40px; height: 40px; display: block; }
+  .themes button[aria-pressed=true] { border-color: var(--live); color: var(--text); font-weight: 650; box-shadow: inset 0 0 0 1px var(--live); }
+  .themes button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .search input { padding-right: 12px; }
+  .search input::-webkit-search-cancel-button { filter: invert(.6); }
+  #found:not(:empty) { margin-top: 8px; }
+  #found .on .song::before { content: "▶ "; }
+  .news { margin: 10px 0 0; padding-left: 20px; color: var(--dim); font-size: 14px; }
+  .news li { margin: 3px 0; }
+  .wide { display: block; width: 100%; margin-top: 14px; }
+  .spin.small { width: 18px; height: 18px; border-width: 2px; margin: 0; flex: none; }
+
+  /* Alarms: two, each with its days; the ringing one gets Snooze and Turn off */
+  .alarm + .alarm { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 14px; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+  .days button {
+    all: unset; text-align: center; padding: 8px 0; border-radius: 9px; font-size: 14px; cursor: pointer;
+    color: var(--dim); background: #0f1a2c; border: 1px solid var(--line);
+  }
+  .days button[aria-pressed=true] { color: var(--live-ink); background: var(--live); border-color: var(--live); font-weight: 650; }
+  .days button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .ringing { background: #2a1d08; border-color: #6a4a18; }
+  .ringing h2 { color: var(--live); }
+  .ringing .big { font-size: 30px; font-weight: 650; margin: 0 0 4px; }
+  .two-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .ghost {
+    all: unset; text-align: center; font-weight: 650; border-radius: 10px; padding: 12px; cursor: pointer;
+    color: var(--text); border: 1px solid #6a4a18;
+  }
+  .ghost:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .bright-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .bright-row svg { width: 18px; height: 18px; flex: none; color: var(--dim); }
+  .bright-row svg.big-sun { width: 24px; height: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="globe" aria-hidden="true"></div>
+    <h1>World Desk Radio</h1>
+    <p class="sub" id="sub">Choose the Wi-Fi the radio should use.</p>
+  </header>
+
+  <section id="setup" hidden>
+    <p id="demo" class="demo" hidden></p>
+    <div id="status" class="status" hidden aria-live="polite"></div>
+    <div id="list" class="list" aria-live="polite"></div>
+    <button id="again" class="again" type="button">Look for networks again</button>
+  </section>
+
+  <section id="radio" class="cards" hidden>
+    <div class="card now">
+      <div class="head">
+        <h2 id="playing-label">Playing</h2>
+        <button class="round" id="power" type="button" aria-pressed="false" aria-label="Standby">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v8M6.4 6.6a8 8 0 1 0 11.2 0"/></svg>
+        </button>
+      </div>
+      <div aria-live="polite">
+        <p class="station" id="station">…</p>
+        <p class="place" id="place"></p>
+        <p class="there" id="there" hidden><span id="sky" aria-hidden="true"></span><span id="there-text"></span></p>
+        <p class="song" id="song" hidden></p>
+      </div>
+      <div class="pad" role="group" aria-label="Remote">
+        <button type="button" data-do="prev" aria-label="Previous station">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 5.5v13L8.5 12z"/><rect x="5" y="5.5" width="2.4" height="13" rx="1"/></svg>
+        </button>
+        <button type="button" data-do="like" id="like" aria-label="Like the song">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>
+        </button>
+        <button type="button" data-do="save" id="save" aria-label="Save as a favorite">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
+        </button>
+        <button type="button" data-do="surprise" aria-label="Surprise me">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7h3c4.5 0 6.5 10 11 10h3M17.5 4l3 3-3 3M3.5 17h3c1.7 0 3-1.4 4.2-3.3M13.3 10.3C14.5 8.4 15.8 7 17.5 7h3M17.5 14l3 3-3 3"/></svg>
+        </button>
+        <button type="button" data-do="next" aria-label="Next station">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5.5v13l9.5-6.5z"/><rect x="16.6" y="5.5" width="2.4" height="13" rx="1"/></svg>
+        </button>
+      </div>
+      <div class="vol">
+        <button class="round" id="mute" type="button" aria-pressed="false" aria-label="Mute">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path id="waves" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path id="cross" d="M16 9.5l5 5M21 9.5l-5 5" hidden/></svg>
+        </button>
+        <input type="range" id="volume" min="0" max="100" step="1" value="80" aria-label="Volume">
+        <span class="num" id="vol-num">80</span>
+      </div>
+    </div>
+
+    <div class="card search">
+      <h2>Search</h2>
+      <input type="search" id="query" placeholder="Station, city, country or style" aria-label="Search for a station"
+             autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
+      <ul class="liked favs" id="found" aria-live="polite"></ul>
+      <p class="muted" id="found-none" hidden>No stations found.</p>
+    </div>
+
+    <div class="card">
+      <h2>Favorites</h2>
+      <ul class="liked favs" id="favs"></ul>
+      <p class="muted" id="favs-none">Tap ★ above, or hold the Tune knob, to save the station playing.</p>
+    </div>
+
+    <div class="card" id="map-card">
+      <h2>Map</h2>
+      <div id="world-part" hidden>
+        <h3 class="sub">World</h3>
+        <div class="seg worlds" id="worlds" role="group" aria-label="World"></div>
+        <p class="muted" style="font-size:14px;margin:8px 0 0">The radio starts again in the world you pick, where you last left it.</p>
+      </div>
+      <div id="zoom-part" hidden>
+        <h3 class="sub">Zoom</h3>
+        <div class="seg zooms" id="zooms" role="group" aria-label="Zoom"></div>
+      </div>
+      <h3 class="sub" id="themes-label">Colors</h3>
+      <div class="themes" id="themes" role="group" aria-labelledby="themes-label"></div>
+    </div>
+
+    <div class="card ringing" id="ringing" hidden aria-live="assertive">
+      <h2 id="ring-label">Alarm</h2>
+      <p class="big" id="ring-time"></p>
+      <p class="muted" id="ring-note"></p>
+      <div class="two-buttons">
+        <button class="go" id="ring-snooze" type="button">Snooze 9 min</button>
+        <button class="ghost" id="ring-stop" type="button">Turn off</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Alarms</h2>
+      <div id="alarms"></div>
+    </div>
+
+    <div class="card">
+      <h2>Sleep timer</h2>
+      <div class="seg" id="timer" role="group" aria-label="Sleep timer">
+        <button type="button" data-min="0">Off</button><button type="button" data-min="15">15</button>
+        <button type="button" data-min="30">30</button><button type="button" data-min="45">45</button>
+        <button type="button" data-min="60">60</button><button type="button" data-min="90">90</button>
+      </div>
+      <p class="muted" id="timer-left"></p>
+    </div>
+
+    <div class="card">
+      <div class="line">
+        <div class="grow">
+          <h2 style="margin-bottom:4px">World tour</h2>
+          <p class="muted" style="margin:0">A new station somewhere in the world every 3 minutes.</p>
+        </div>
+        <button class="switch" id="tour" role="switch" aria-checked="false" aria-label="World tour"></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Songs you liked</h2>
+      <ul class="liked" id="liked"></ul>
+      <p class="muted" id="liked-none">Tap both knob buttons together while a song plays to save it here.</p>
+      <p class="muted" id="liked-hint" hidden style="font-size:14px;margin:10px 0 0">The green button looks the song up in Spotify, where you can like it or add it to a playlist.</p>
+    </div>
+
+    <div class="card">
+      <h2>Display</h2>
+      <div class="line">
+        <div class="grow">Temperature</div>
+        <div class="seg two" id="units" role="group" aria-label="Temperature units">
+          <button type="button" data-units="F">°F</button><button type="button" data-units="C">°C</button>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <div>Screen brightness</div>
+        <div class="bright-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 4v1.5M12 18.5V20M4 12h1.5M18.5 12H20"/></svg>
+          <input type="range" id="brightness" min="10" max="100" step="5" value="100" aria-label="Screen brightness">
+          <svg class="big-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+        </div>
+      </div>
+      <div class="line" style="margin-top:14px">
+        <div class="grow">Country borders</div>
+        <button class="switch setting" id="borders" data-key="borders" role="switch" aria-checked="true" aria-label="Country borders"></button>
+      </div>
+      <div class="line" style="margin-top:14px">
+        <div class="grow">Major cities<p class="muted" style="margin:0;font-size:14px">Labeled when zoomed in</p></div>
+        <button class="switch setting" id="cities" data-key="cities" role="switch" aria-checked="true" aria-label="Major cities"></button>
+      </div>
+      <div class="line" style="margin-top:14px">
+        <div class="grow">Spin the globe when idle<p class="muted" style="margin:0;font-size:14px">Paused while the sleep timer runs</p></div>
+        <button class="switch setting" id="spin" data-key="spin" role="switch" aria-checked="true" aria-label="Spin the globe when idle"></button>
+      </div>
+    </div>
+
+    <div class="card" id="software" hidden>
+      <h2>Software</h2>
+      <div class="line"><span class="spin small" id="upd-spin" hidden></span><div class="grow" id="upd-words"></div></div>
+      <p class="muted" id="upd-detail"></p>
+      <ul class="news" id="upd-new" hidden></ul>
+      <button class="go wide" id="upd-install" type="button" hidden>Install now</button>
+      <div class="line" style="margin-top:14px">
+        <div class="grow">Install updates by itself<p class="muted" style="margin:0;font-size:14px">At night, while the radio is quiet</p></div>
+        <button class="switch" id="auto-update" role="switch" aria-checked="false" aria-label="Install updates by itself"></button>
+      </div>
+      <button class="small" id="upd-check" type="button">Check now</button>
+    </div>
+
+    <p class="foot" id="skipped" hidden></p>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const lockSvg = '<svg class="lock" viewBox="0 0 16 16" aria-label="needs a password"><path d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z"/></svg>';
+let networks = [], openSsid = null, polling = null, radioTimer = null;
+
+async function post(path, body) {
+  const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body) });
+  if (!r.ok) throw new Error('refused');
+  return r.json();
+}
+
+/* --- Wi-Fi setup ------------------------------------------------------------ */
+
+function bars(signal) {
+  const on = signal > 75 ? 4 : signal > 50 ? 3 : signal > 25 ? 2 : 1;
+  return '<span class="bars" aria-label="signal ' + on + ' of 4">' +
+    [1, 2, 3, 4].map((n) => '<i class="' + (n <= on ? 'on' : '') + '"></i>').join('') + '</span>';
+}
+
+function render() {
+  const list = $('list');
+  list.textContent = '';
+  for (const n of networks) {
+    const box = document.createElement('div');
+    box.className = 'net' + (n.ssid === openSsid ? ' open' : '');
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'row';
+    row.innerHTML = '<span class="name"></span>' + (n.secure ? lockSvg : '') + bars(n.signal);
+    row.querySelector('.name').textContent = n.ssid;
+    row.addEventListener('click', () => { openSsid = openSsid === n.ssid ? null : n.ssid; render(); });
+    box.appendChild(row);
+    if (n.ssid === openSsid) box.appendChild(form(n));
+    list.appendChild(box);
+  }
+  const focus = list.querySelector('input');
+  if (focus) focus.focus();
+}
+
+function form(n) {
+  const f = document.createElement('form');
+  if (n.secure) {
+    f.innerHTML = '<div class="field"><input type="password" autocomplete="off" autocapitalize="off" ' +
+      'spellcheck="false" placeholder="Password" aria-label="Password" required minlength="8">' +
+      '<button class="show" type="button">Show</button></div>';
+    const input = f.querySelector('input'), show = f.querySelector('.show');
+    show.addEventListener('click', () => {
+      const hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      show.textContent = hidden ? 'Hide' : 'Show';
+    });
+  }
+  const go = document.createElement('button');
+  go.className = 'go';
+  go.type = 'submit';
+  go.textContent = 'Connect';
+  f.appendChild(go);
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = f.querySelector('input');
+    connect(n.ssid, input ? input.value : '');
+  });
+  return f;
+}
+
+function showStatus(kind, title, text) {
+  const s = $('status');
+  s.hidden = false;
+  s.className = 'status' + (kind === 'bad' ? ' bad' : '');
+  const icon = kind === 'busy' ? '<div class="spin" aria-hidden="true"></div>'
+    : kind === 'ok' ? '<svg class="tick" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#ffba54" stroke-width="3"/><path d="M12 21l5 5 11-12" fill="none" stroke="#ffba54" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : '';
+  s.innerHTML = icon + '<h2></h2><p></p>';
+  s.querySelector('h2').textContent = title;
+  s.querySelector('p').textContent = text;
+  $('list').hidden = $('again').hidden = kind !== 'bad';
+}
+
+async function connect(ssid, password) {
+  showStatus('busy', 'Connecting to ' + ssid + '…',
+    'Your phone may drop off this network when the radio connects. That’s normal: the radio’s screen shows how it went.');
+  try {
+    await post('/api/connect', { ssid, password });
+  } catch (e) {
+    showStatus('bad', 'That didn’t go through', 'Look for networks again and pick yours.');
+    return;
+  }
+  clearInterval(polling);
+  polling = setInterval(async () => {
+    let s;
+    try { s = await (await fetch('/api/status')).json(); } catch (e) { return; }
+    if (s.phase === 'connected' || s.phase === 'off') {
+      clearInterval(polling);
+      showStatus('ok', 'Connected to ' + ssid, 'The radio is back on the air. You can close this page.');
+    } else if (s.phase === 'failed' || s.phase === 'waiting') {
+      clearInterval(polling);
+      openSsid = ssid;
+      render();
+      showStatus('bad', 'Couldn’t connect to ' + ssid, 'Check the password and try again.');
+    }
+  }, 700);
+}
+
+/* --- The companion ------------------------------------------------------------ */
+
+const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+let editingAlarm = -1, alarmState = [], brightHeld = 0, brightSent = 0;
+
+/* One alarm's controls: time, on/off, its days, and the station it wakes to */
+function alarmBlock(i) {
+  const box = document.createElement('div');
+  box.className = 'alarm';
+  box.innerHTML = '<div class="line"><div class="grow"><input type="time" class="a-time" value="07:00"></div>' +
+    '<button class="switch a-on" role="switch" aria-checked="false"></button></div>' +
+    '<div class="days" role="group"></div><p class="muted a-station"></p>' +
+    '<button class="small a-current" type="button">Wake to the station playing now</button>';
+  const time = box.querySelector('.a-time'), on = box.querySelector('.a-on'), days = box.querySelector('.days');
+  time.setAttribute('aria-label', 'Alarm ' + (i + 1) + ' time');
+  on.setAttribute('aria-label', 'Alarm ' + (i + 1) + ' on');
+  days.setAttribute('aria-label', 'Alarm ' + (i + 1) + ' days');
+  DAY_LETTERS.forEach((letter, d) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = letter;
+    b.dataset.d = d;
+    b.setAttribute('aria-label', DAY_NAMES[d]);
+    b.addEventListener('click', () => {
+      const chosen = picked(days);
+      const next = chosen.includes(d) ? chosen.filter((x) => x !== d) : chosen.concat(d);
+      if (!next.length) return;                         // at least one day
+      b.setAttribute('aria-pressed', String(!chosen.includes(d)));
+      alarmPost(i, { days: next });
+    });
+    days.appendChild(b);
+  });
+  on.addEventListener('click', () => {
+    const now = on.getAttribute('aria-checked') !== 'true';
+    setSwitch(on, now);
+    alarmPost(i);
+  });
+  time.addEventListener('focus', () => { editingAlarm = i; });
+  time.addEventListener('blur', () => { editingAlarm = -1; });
+  time.addEventListener('change', () => { editingAlarm = -1; setSwitch(on, true); alarmPost(i); });
+  box.querySelector('.a-current').addEventListener('click', () => alarmPost(i, { use_current: true }));
+  return box;
+}
+
+function picked(days) {
+  return [...days.querySelectorAll('button')].filter((b) => b.getAttribute('aria-pressed') === 'true')
+    .map((b) => Number(b.dataset.d));
+}
+
+function daysWords(days) {
+  const key = days.join('');
+  if (key === '0123456') return 'Every day';
+  if (key === '01234') return 'Weekdays';
+  if (key === '56') return 'Weekends';
+  return days.map((d) => DAY_NAMES[d].slice(0, 3)).join(', ');
+}
+
+function showAlarms(alarms) {
+  const holder = $('alarms');
+  while (holder.children.length < alarms.length) holder.appendChild(alarmBlock(holder.children.length));
+  alarmState = alarms;
+  alarms.forEach((a, i) => {
+    const box = holder.children[i];
+    if (editingAlarm !== i) box.querySelector('.a-time').value = a.time;
+    setSwitch(box.querySelector('.a-on'), a.on);
+    for (const b of box.querySelectorAll('.days button')) {
+      b.setAttribute('aria-pressed', String(a.days.includes(Number(b.dataset.d))));
+    }
+    box.querySelector('.a-station').textContent = daysWords(a.days) + ' · ' +
+      (a.station ? 'wakes to ' + a.station : 'wakes to the station playing when you set it');
+  });
+}
+
+function alarmPost(i, extra) {
+  const box = $('alarms').children[i];
+  return post('/api/alarm', Object.assign({
+    index: i, on: box.querySelector('.a-on').getAttribute('aria-checked') === 'true',
+    time: box.querySelector('.a-time').value || '07:00', days: picked(box.querySelector('.days')),
+  }, extra || {})).then(() => setTimeout(refresh, 250)).catch(() => {});
+}
+
+function setSwitch(el, on) { el.setAttribute('aria-checked', on ? 'true' : 'false'); }
+
+/* The weather symbols, drawn like the radio's screen draws them (map_view._weather_icon) */
+function skySvg(sky) {
+  const c = (x, y, r, extra) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"' + (extra || '') + '/>';
+  const cloud = (x, y, s, cls) => '<g' + (cls ? ' class="' + cls + '"' : '') + '>' +
+    c(x - 3.4 * s, y + 1.3 * s, 2.5 * s) + c(x - 0.4 * s, y - 0.6 * s, 3.6 * s) + c(x + 3.2 * s, y + s, 2.8 * s) +
+    '<rect x="' + (x - 3.4 * s) + '" y="' + (y + 1.3 * s) + '" width="' + 6.6 * s + '" height="' + 2.5 * s + '"/></g>';
+  const sun = (x, y, r) => c(x, y, r) + [0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+    const a = Math.PI * i / 4, cs = Math.cos(a), sn = Math.sin(a);
+    return '<line x1="' + (x + 1.6 * r * cs) + '" y1="' + (y + 1.6 * r * sn) + '" x2="' + (x + 2.15 * r * cs) +
+      '" y2="' + (y + 2.15 * r * sn) + '" stroke="currentColor" stroke-width="' + (0.32 * r + 0.4) + '" stroke-linecap="round"/>';
+  }).join('');
+  const moon = (x, y, r) => '<mask id="crescent"><rect x="-10" y="-10" width="20" height="20" fill="#fff"/>' +
+    c(x + 0.55 * r, y - 0.4 * r, 0.82 * r, ' fill="#000"') + '</mask>' + c(x, y, r, ' mask="url(#crescent)"');
+  const line = (x0, y0, x1, y1, w) => '<line x1="' + x0 + '" y1="' + y0 + '" x2="' + x1 + '" y2="' + y1 +
+    '" stroke="currentColor" stroke-width="' + w + '" stroke-linecap="round"/>';
+  const bolt = '0.9,0.6 -1.7,4 -0.1,4 -1.2,7.2 2.3,3 0.7,3 2.1,0.6';
+  const art = {
+    'sun': sun(0, 0, 2.9),
+    'moon': moon(-0.6, 0.2, 4.6),
+    'sun-cloud': sun(-2.6, -2.4, 2.1) + cloud(1.4, 1.2, 0.9, 'gap') + cloud(1.4, 1.2, 0.9),
+    'moon-cloud': moon(-2.6, -2.6, 3.3) + cloud(1.4, 1.2, 0.9, 'gap') + cloud(1.4, 1.2, 0.9),
+    'cloud': cloud(0, 0, 1),
+    'fog': cloud(0, -2.4, 0.85) + line(-4.8, 3.2, 4.2, 3.2, 1.3) + line(-3.2, 5.8, 3.6, 5.8, 1.3),
+    'rain': cloud(0, -2.2, 1) + [-2.6, 0.6, 3.8].map((x) => line(x, 2.9, x - 1, 5.4, 1.3)).join(''),
+    'snow': cloud(0, -2.2, 1) + c(-2.8, 3.9, 0.95) + c(0.4, 5.3, 0.95) + c(3.6, 3.9, 0.95),
+    'storm': cloud(0, -2.2, 1) + '<polygon class="gap" points="' + bolt + '"/><polygon points="' + bolt + '"/>',
+  }[sky];
+  return art ? '<svg viewBox="-8.5 -7.5 17 15" fill="currentColor">' + art + '</svg>' : '';
+}
+
+let volumeHeld = 0, volumeSent = 0;     // while the slider moves, the radio's answers wait
+let lastLiked = null;
+// Spotify's mark (its green circle and three sound waves), for the buttons that open a song there
+const SPOTIFY_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1ED760"/>' +
+  '<path d="M6.3 9.2c3.7-1.1 8.3-.8 11.5 1.1M6.9 12.4c3.1-.9 6.8-.6 9.5 1M7.6 15.4c2.4-.6 5.1-.4 7.2.8" fill="none" ' +
+  'stroke="#04060c" stroke-width="1.9" stroke-linecap="round"/></svg>';
+
+function remote(action, value) {
+  return post('/api/remote', value === undefined ? { do: action } : { do: action, value })
+    .then(() => setTimeout(refresh, 200)).catch(() => {});
+}
+
+function showRadio(d) {
+  const now = d.now || {};
+  $('station').textContent = now.station || 'Nothing playing';
+  $('place').textContent = now.place || '';
+  const there = [now.weather, now.local ? now.local + ' there' : ''].filter(Boolean).join(' · ');
+  $('there').hidden = !there;
+  $('there-text').textContent = there;
+  $('sky').innerHTML = now.sky ? skySvg(now.sky) : '';
+  $('song').hidden = !now.song;
+  $('song').innerHTML = (now.liked ? '<span class="heart" aria-label="liked">♥</span> ' : '');
+  $('song').appendChild(document.createTextNode(now.song || ''));
+  $('playing-label').textContent = d.asleep ? 'Standby' : now.status === 'playing' ? 'Playing'
+    : now.status === 'tuning' ? 'Tuning' : 'Radio';
+  $('power').setAttribute('aria-pressed', String(!d.asleep));
+  $('power').setAttribute('aria-label', d.asleep ? 'Turn on' : 'Standby');
+  $('like').classList.toggle('lit', !!now.liked);
+  $('save').classList.toggle('lit', d.favorite != null);
+  if (Date.now() - volumeHeld > 1500 && d.volume != null) $('volume').value = d.volume;
+  $('vol-num').textContent = $('volume').value;
+  $('mute').setAttribute('aria-pressed', String(!!d.muted));
+  $('mute').setAttribute('aria-label', d.muted ? 'Sound on' : 'Mute');
+  $('waves').toggleAttribute('hidden', !!d.muted);
+  $('cross').toggleAttribute('hidden', !d.muted);
+
+  const favs = $('favs');
+  favs.textContent = '';
+  (d.favorites || []).forEach((f, i) => {
+    const li = document.createElement('li');
+    li.className = i === d.favorite ? 'on' : '';
+    li.innerHTML = '<button class="pick" type="button"><div class="song"></div><div class="from"></div></button>' +
+      '<button class="x" type="button" aria-label="Remove">×</button>';
+    li.querySelector('.song').textContent = f.name;
+    li.querySelector('.from').textContent = f.place;
+    li.querySelector('.pick').addEventListener('click', () => remote('favorite', i));
+    li.querySelector('.x').addEventListener('click', () => remote('unfavorite', i));
+    favs.appendChild(li);
+  });
+  $('favs-none').hidden = (d.favorites || []).length > 0;
+  for (const b of $('units').querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.units === d.units));
+  showWorlds(d.worlds || [], d.world);
+  showZooms(d.zooms || [], d.zoom);
+  showThemes(d.themes || [], d.theme);
+  setSwitch($('borders'), d.borders !== false);
+  setSwitch($('cities'), d.cities !== false);
+  setSwitch($('spin'), d.spin !== false);
+  showUpdate(d.update);
+
+  showAlarms(d.alarms || []);
+  const ring = d.ringing;
+  $('ringing').hidden = !ring;
+  if (ring) {
+    $('ring-label').textContent = ring.snoozed ? 'Alarm snoozed' : 'Alarm';
+    $('ring-time').textContent = ring.snoozed ? 'Back at ' + ring.snoozed : ring.time;
+    $('ring-note').textContent = ring.snoozed ? 'The radio is quiet until then.' : 'Good morning.';
+    $('ring-snooze').hidden = !!ring.snoozed;
+  }
+  if (Date.now() - brightHeld > 1500 && d.brightness != null) $('brightness').value = d.brightness;
+
+  for (const b of $('timer').querySelectorAll('button')) {
+    const min = Number(b.dataset.min);
+    b.setAttribute('aria-pressed', String(d.timer == null ? min === 0 : d.timer_set === min));
+  }
+  $('timer-left').textContent = d.timer == null ? '' : 'Going to sleep in ' + d.timer + ' min';
+
+  setSwitch($('tour'), d.tour);
+
+  const liked = d.liked || [];
+  const likedKey = JSON.stringify(liked);
+  if (likedKey !== lastLiked) {             // rebuild only when it changed, so taps aren't lost
+    lastLiked = likedKey;
+    const list = $('liked');
+    list.textContent = '';
+    for (const s of liked) {
+      const li = document.createElement('li');
+      li.innerHTML = '<div class="grow"><div class="song"></div><div class="from"></div></div>' +
+        '<a class="spot" target="_blank" rel="noopener" aria-label="Find on Spotify">' + SPOTIFY_MARK + '</a>' +
+        '<button class="x" type="button" aria-label="Remove">×</button>';
+      li.querySelector('.song').textContent = s.song;
+      li.querySelector('.from').textContent = s.station + (s.place ? ' · ' + s.place : '') + ' · ' + s.when;
+      li.querySelector('.spot').href = s.spotify;
+      li.querySelector('.spot').setAttribute('aria-label', 'Find ' + s.song + ' on Spotify');
+      li.querySelector('.x').addEventListener('click', async () => { await post('/api/unlike', { id: s.id }); refresh(); });
+      list.appendChild(li);
+    }
+  }
+  $('liked-none').hidden = liked.length > 0;
+  $('liked-hint').hidden = liked.length === 0;
+  $('skipped').hidden = !d.skipped;
+  $('skipped').textContent = d.skipped ? 'Skipping ' + d.skipped + ' stations that seem to be off the air.' : '';
+}
+
+function showUpdate(u) {
+  $('software').hidden = !u;
+  if (!u) return;
+  $('upd-words').textContent = u.words;
+  $('upd-spin').hidden = !['checking', 'installing', 'installed'].includes(u.state);
+  const detail = {
+    ready: 'Version ' + u.latest + (u.detail ? ' · ' + u.detail : ''),
+    failed: 'Still on version ' + u.version + '. ' + u.detail,
+    own: 'Version ' + u.version + (u.detail ? ' · ' + u.detail : ''),
+    installed: 'Version ' + u.version,
+  }[u.state] || (u.version ? 'Version ' + u.version : '');
+  $('upd-detail').textContent = detail;
+  const news = $('upd-new');
+  news.textContent = '';
+  for (const line of u.state === 'ready' ? u.new : []) {
+    const li = document.createElement('li');
+    li.textContent = line;
+    news.appendChild(li);
+  }
+  news.hidden = !news.children.length;
+  $('upd-install').hidden = u.state !== 'ready';
+  $('upd-check').hidden = ['checking', 'installing', 'installed'].includes(u.state);
+  setSwitch($('auto-update'), u.auto);
+}
+
+async function refresh() {
+  try { showRadio(await (await fetch('/api/radio')).json()); } catch (e) { /* the next try will do */ }
+}
+
+/* --- Search: find a station by name, place or style, and tap it to tune there --------------- */
+
+let searchTimer = null, searchAsked = 0;
+
+async function search() {
+  const q = $('query').value.trim(), asked = ++searchAsked;
+  if (!q) { $('found').textContent = ''; $('found-none').hidden = true; return; }
+  let results;
+  try { results = (await (await fetch('/api/search?q=' + encodeURIComponent(q))).json()).results; } catch (e) { return; }
+  if (asked !== searchAsked) return;                   // a newer search is on its way
+  const found = $('found');
+  found.textContent = '';
+  for (const r of results) {
+    const li = document.createElement('li');
+    li.innerHTML = '<button class="pick" type="button"><div class="song"></div><div class="from"></div></button>';
+    li.querySelector('.song').textContent = r.name;
+    li.querySelector('.from').textContent = r.place;
+    li.querySelector('.pick').addEventListener('click', () => {
+      post('/api/play', { id: r.id }).then(() => setTimeout(refresh, 200)).catch(() => {});
+      for (const other of found.children) other.className = other === li ? 'on' : '';
+    });
+    found.appendChild(li);
+  }
+  $('found-none').hidden = results.length > 0;
+}
+
+$('query').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(search, 250); });
+$('query').addEventListener('keydown', (e) => { if (e.key === 'Enter') { clearTimeout(searchTimer); search(); $('query').blur(); } });
+
+$('ring-snooze').addEventListener('click', () => post('/api/ring', { do: 'snooze' }).then(() => setTimeout(refresh, 250)));
+$('ring-stop').addEventListener('click', () => post('/api/ring', { do: 'stop' }).then(() => setTimeout(refresh, 250)));
+$('brightness').addEventListener('input', () => {
+  brightHeld = Date.now();
+  if (Date.now() - brightSent > 120) {                 // a few a second while sliding
+    brightSent = Date.now();
+    post('/api/settings', { brightness: Number($('brightness').value) }).catch(() => {});
+  }
+});
+$('brightness').addEventListener('change', () => {
+  brightHeld = Date.now();
+  post('/api/settings', { brightness: Number($('brightness').value) }).catch(() => {});
+});
+for (const b of $('timer').querySelectorAll('button')) {
+  b.addEventListener('click', () => post('/api/timer', { minutes: Number(b.dataset.min) }).then(() => setTimeout(refresh, 250)));
+}
+for (const b of document.querySelectorAll('.pad button')) b.addEventListener('click', () => remote(b.dataset.do));
+$('power').addEventListener('click', () => remote('power'));
+$('mute').addEventListener('click', () => remote('mute'));
+$('volume').addEventListener('input', () => {
+  volumeHeld = Date.now();
+  $('vol-num').textContent = $('volume').value;
+  if (Date.now() - volumeSent > 120) {                 // a few a second is plenty while sliding
+    volumeSent = Date.now();
+    remote('volume', Number($('volume').value));
+  }
+});
+$('volume').addEventListener('change', () => { volumeHeld = Date.now(); remote('volume', Number($('volume').value)); });
+// Earth and the game worlds installed: tap one to go there.
+let shownWorlds = '';
+function showWorlds(list, here) {
+  $('world-part').hidden = list.length < 2;
+  const key = JSON.stringify(list);
+  if (key !== shownWorlds) {
+    shownWorlds = key;
+    const box = $('worlds');
+    box.textContent = '';
+    for (const w of list) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.world = w.id;
+      b.textContent = w.title;
+      b.addEventListener('click', () => post('/api/world', { id: w.id }).then(() => setTimeout(refresh, 3000)));
+      box.appendChild(b);
+    }
+  }
+  for (const b of $('worlds').querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.world === here));
+}
+
+// The color themes, each a little globe in its own colors: tap one and the map changes to it.
+let shownThemes = '', themePicked = 0;
+function themeGlobe(t) {
+  return '<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="' + t.space + '"/>' +
+    '<circle cx="20" cy="20" r="14" fill="' + t.globe + '"/>' +
+    '<path d="M11 15c3-2 6 0 8-2s5-1 7 1M10 24c3 1 5-1 8 0s4 3 7 2 4-2 5-1" fill="none" stroke="' + t.coast +
+    '" stroke-width="1.6" stroke-linecap="round"/><circle cx="24" cy="19" r="2.6" fill="' + t.live + '"/></svg>';
+}
+function showThemes(list, here) {
+  $('map-card').hidden = list.length < 2 && $('world-part').hidden;
+  const key = JSON.stringify(list);
+  if (key !== shownThemes) {
+    shownThemes = key;
+    const box = $('themes');
+    box.textContent = '';
+    for (const t of list) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.theme = t.name;
+      b.innerHTML = themeGlobe(t) + '<span></span>';
+      b.querySelector('span').textContent = t.name[0].toUpperCase() + t.name.slice(1);
+      b.addEventListener('click', () => {
+        themePicked = Date.now();
+        markTheme(t.name);                               // lit at once, before the radio answers
+        post('/api/theme', { name: t.name }).then(() => setTimeout(refresh, 200));
+      });
+      box.appendChild(b);
+    }
+  }
+  if (Date.now() - themePicked > 1500) markTheme(here);
+}
+function markTheme(name) {
+  for (const b of $('themes').querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.theme === name));
+}
+
+// The zoom levels ("Whole world", "2,000 km", "500 km", or a game world's "Whole map" ...): tap one to go there.
+let shownZooms = '', zoomPicked = 0;
+function showZooms(list, here) {
+  $('zoom-part').hidden = list.length < 2;
+  const key = JSON.stringify(list);
+  if (key !== shownZooms) {
+    shownZooms = key;
+    const box = $('zooms');
+    box.textContent = '';
+    box.style.gridTemplateColumns = 'repeat(' + Math.max(1, list.length) + ', 1fr)';
+    list.forEach((label, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.zoom = String(i);
+      b.textContent = label;
+      b.addEventListener('click', () => {
+        zoomPicked = Date.now();
+        markZoom(i);                                     // lit at once, before the radio answers
+        post('/api/zoom', { index: i }).then(() => setTimeout(refresh, 200));
+      });
+      box.appendChild(b);
+    });
+  }
+  if (Date.now() - zoomPicked > 1500) markZoom(here);
+}
+function markZoom(i) {
+  for (const b of $('zooms').querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.zoom === String(i)));
+}
+
+for (const b of $('units').querySelectorAll('button')) {
+  b.addEventListener('click', () => post('/api/settings', { units: b.dataset.units }).then(() => setTimeout(refresh, 200)));
+}
+for (const sw of document.querySelectorAll('.switch.setting')) {
+  sw.addEventListener('click', () => {
+    const on = sw.getAttribute('aria-checked') !== 'true';
+    setSwitch(sw, on);
+    post('/api/settings', { [sw.dataset.key]: on }).then(() => setTimeout(refresh, 200));
+  });
+}
+$('auto-update').addEventListener('click', () => {
+  const on = $('auto-update').getAttribute('aria-checked') !== 'true';
+  setSwitch($('auto-update'), on);
+  post('/api/settings', { auto_update: on }).then(() => setTimeout(refresh, 200));
+});
+$('upd-install').addEventListener('click', () => post('/api/update', { do: 'install' }).then(() => setTimeout(refresh, 200)));
+$('upd-check').addEventListener('click', () => post('/api/update', { do: 'check' }).then(() => setTimeout(refresh, 200)));
+$('tour').addEventListener('click', () => {
+  const on = $('tour').getAttribute('aria-checked') !== 'true';
+  setSwitch($('tour'), on);
+  post('/api/tour', { on }).then(() => setTimeout(refresh, 250));
+});
+
+/* --- Which page to show ------------------------------------------------------------ */
+
+async function load() {
+  $('status').hidden = true;
+  $('list').hidden = $('again').hidden = false;
+  let data;
+  try { data = await (await fetch('/api/networks')).json(); } catch (e) { data = { active: false }; }
+  if (data.active) {
+    $('setup').hidden = false;
+    $('radio').hidden = true;
+    $('sub').textContent = 'Choose the Wi-Fi the radio should use.';
+    if (data.demo) {
+      $('demo').hidden = false;
+      $('demo').innerHTML = 'Laptop demo: these networks are pretend. Their password is <b></b>.';
+      $('demo').querySelector('b').textContent = data.demo;
+    }
+    networks = data.networks;
+    render();
+    return;
+  }
+  const r = await fetch('/api/radio').catch(() => null);
+  if (r && r.ok) {
+    $('setup').hidden = true;
+    $('radio').hidden = false;
+    $('sub').textContent = 'Your radio, from your phone.';
+    document.title = 'World Desk Radio remote';
+    showRadio(await r.json());
+    clearInterval(radioTimer);
+    radioTimer = setInterval(() => { if (!document.hidden) refresh(); }, 1500);
+    return;
+  }
+  $('setup').hidden = false;
+  networks = [];
+  render();
+  showStatus('bad', 'Setup isn’t on', 'Start Wi-Fi setup on the radio, then look again.');
+}
+
+$('again').addEventListener('click', load);
+load();
+</script>
+</body>
+</html>
